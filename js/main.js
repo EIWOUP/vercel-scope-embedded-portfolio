@@ -1,283 +1,204 @@
-/**
- * liquid-glass-magnifier.js
- * Apple-style liquid glass cursor magnifier
- * Drop into /js/ and add <script src="js/liquid-glass-magnifier.js" defer></script>
- * just before </body> in index.html
- */
+/* ═══════════════════════════════════════════════════════
+   EMBEDDED PORTFOLIO — MAIN JS
+   ═══════════════════════════════════════════════════════ */
 
-(function () {
-  'use strict';
+/* ── THEME TOGGLE ───────────────────────────────────────── */
+const html        = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = themeToggle.querySelector('.theme-icon');
 
-  /* ── Config ──────────────────────────────── */
-  const MAG_SIZE   = 160;          // px — match --mag-size in CSS
-  const ZOOM_STEP  = 0.25;
-  const ZOOM_MIN   = 1.5;
-  const ZOOM_MAX   = 4.0;
-  let   zoomLevel  = 2.0;
+// Default: dark
+let isDark = localStorage.getItem('theme') !== 'light';
+applyTheme();
 
-  /* ── State ───────────────────────────────── */
-  let magEnabled  = false;
-  let mouseX = window.innerWidth / 2;
-  let mouseY = window.innerHeight / 2;
-  let curX   = mouseX;
-  let curY   = mouseY;
-  let dotX   = mouseX;
-  let dotY   = mouseY;
-  let rafId  = null;
+themeToggle.addEventListener('click', () => {
+  isDark = !isDark;
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  applyTheme();
+});
 
-  /* ── Build DOM ───────────────────────────── */
-  const mag = document.createElement('div');
-  mag.id = 'liquid-glass-mag';
+function applyTheme() {
+  html.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  themeIcon.textContent = isDark ? '☀' : '🌙';
+}
 
-  const magInner = document.createElement('div');
-  magInner.className = 'mag-inner';
-  mag.appendChild(magInner);
+/* ── NAV SCROLL ─────────────────────────────────────────── */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
 
-  const dot    = document.createElement('div');  dot.id    = 'cursor-dot';
-  const ring   = document.createElement('div');  ring.id   = 'cursor-ring';
-  const badge  = document.createElement('div');  badge.id  = 'mag-zoom-badge';
-  const btn    = document.createElement('button'); btn.id  = 'mag-toggle-btn';
-  const prog   = document.createElement('div');  prog.id   = 'scroll-progress';
+/* ── HAMBURGER ──────────────────────────────────────────── */
+const hamburger  = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
 
-  btn.innerHTML  = '⊕';
-  btn.title      = 'Toggle Magnifier';
-  badge.textContent = `${zoomLevel.toFixed(1)}×`;
+hamburger.addEventListener('click', () => {
+  mobileMenu.classList.toggle('open');
+});
 
-  document.body.appendChild(mag);
-  document.body.appendChild(dot);
-  document.body.appendChild(ring);
-  document.body.appendChild(badge);
-  document.body.appendChild(btn);
-  document.body.appendChild(prog);
+function closeMobile() {
+  mobileMenu.classList.remove('open');
+}
 
-  /* ── Scroll progress ─────────────────────── */
-  function updateScroll() {
-    const h   = document.documentElement;
-    const pct = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
-    prog.style.width = Math.min(pct, 100) + '%';
-  }
-  document.addEventListener('scroll', updateScroll, { passive: true });
+/* ── OSCILLOSCOPE CANVAS ────────────────────────────────── */
+(function initOscilloscope() {
+  const canvas = document.getElementById('oscilloscope');
+  if (!canvas) return;
 
-  /* ── Cursor tracking ─────────────────────── */
-  document.addEventListener('mousemove', e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  });
+  const ctx = canvas.getContext('2d');
+  let W, H, raf;
 
-  /* interactive-element hover state */
-  document.addEventListener('mouseover', e => {
-    if (e.target.matches('a,button,input,textarea,[role="button"],.project-card,.skill-item')) {
-      document.body.classList.add('hovering');
-    }
-  });
-  document.addEventListener('mouseout', e => {
-    if (e.target.matches('a,button,input,textarea,[role="button"],.project-card,.skill-item')) {
-      document.body.classList.remove('hovering');
-    }
-  });
+  const WAVES = [
+    { freq: 0.006, amp: 0.10, phase: 0,    speed: 0.012, color: '#00FF88' },
+    { freq: 0.009, amp: 0.05, phase: 2.1,  speed: 0.007, color: '#FFB800' },
+    { freq: 0.004, amp: 0.07, phase: 4.3,  speed: 0.004, color: '#00CCFF' },
+  ];
 
-  /* press squish */
-  document.addEventListener('mousedown', () => { if (magEnabled) mag.classList.add('pressed'); });
-  document.addEventListener('mouseup',   () => { mag.classList.remove('pressed'); });
-
-  /* ── Toggle ──────────────────────────────── */
-  function enableMag() {
-    magEnabled = true;
-    mag.classList.add('active');
-    document.body.classList.add('mag-on');
-    btn.classList.add('active');
-    btn.innerHTML = '⊗';
-    badge.classList.add('visible');
-    buildMagContent();
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
   }
 
-  function disableMag() {
-    magEnabled = false;
-    mag.classList.remove('active', 'pressed');
-    document.body.classList.remove('mag-on');
-    btn.classList.remove('active');
-    btn.innerHTML = '⊕';
-    badge.classList.remove('visible');
-    magInner.innerHTML = '';
-  }
+  window.addEventListener('resize', resize, { passive: true });
+  resize();
 
-  btn.addEventListener('click', () => {
-    magEnabled ? disableMag() : enableMag();
-  });
+  let t = 0;
 
-  /* ── Keyboard shortcuts ──────────────────── */
-  document.addEventListener('keydown', e => {
-    if (e.key === 'm' || e.key === 'M') {
-      magEnabled ? disableMag() : enableMag();
-    }
-    if (magEnabled) {
-      if (e.key === '+' || e.key === '=') adjustZoom(ZOOM_STEP);
-      if (e.key === '-' || e.key === '_') adjustZoom(-ZOOM_STEP);
-    }
-  });
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
 
-  /* ── Scroll wheel zoom inside magnifier ─── */
-  document.addEventListener('wheel', e => {
-    if (!magEnabled) return;
-    e.preventDefault();
-    adjustZoom(e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP);
-  }, { passive: false });
+    WAVES.forEach(wave => {
+      ctx.beginPath();
+      ctx.strokeStyle = wave.color;
+      ctx.lineWidth = 1.5;
+      ctx.shadowColor = wave.color;
+      ctx.shadowBlur = 8;
 
-  function adjustZoom(delta) {
-    zoomLevel = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoomLevel + delta));
-    badge.textContent = `${zoomLevel.toFixed(1)}×`;
-    updateMagTransform(curX, curY);
-  }
+      for (let x = 0; x <= W; x += 2) {
+        const y = H / 2
+          + Math.sin(x * wave.freq + t * wave.speed + wave.phase) * (H * wave.amp)
+          + Math.sin(x * wave.freq * 0.5 + t * wave.speed * 0.6) * (H * wave.amp * 0.4);
 
-  /* ── Clone page content into magnifier ──── */
-  let cloneRoot = null;
-
-  function buildMagContent() {
-    magInner.innerHTML = '';
-
-    /* Clone the page body into the mag lens */
-    cloneRoot = document.body.cloneNode(true);
-
-    /* strip the UI elements we injected */
-    ['liquid-glass-mag','cursor-dot','cursor-ring',
-     'mag-zoom-badge','mag-toggle-btn','scroll-progress'].forEach(id => {
-      const el = cloneRoot.querySelector('#' + id);
-      if (el) el.remove();
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
     });
 
-    /* copy stylesheets as a single blob to force same rendering */
-    const styleLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'));
-    const styleBlob  = styleLinks.map(l => {
-      if (l.tagName === 'STYLE') return l.outerHTML;
-      return `<link rel="stylesheet" href="${l.href}">`;
-    }).join('\n');
+    t++;
+    raf = requestAnimationFrame(draw);
+  }
 
-    /* wrap in an iframe for isolated rendering */
-    const iframe = document.createElement('iframe');
-    iframe.style.cssText = `
-      position: absolute;
-      width:  ${window.innerWidth}px;
-      height: ${window.innerHeight}px;
-      top: 0; left: 0;
-      border: none;
-      pointer-events: none;
-      background: transparent;
-    `;
-    iframe.setAttribute('scrolling', 'no');
-    iframe.setAttribute('aria-hidden', 'true');
-    iframe.setAttribute('tabindex', '-1');
-    magInner.appendChild(iframe);
+  // Pause when tab not visible (performance)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(raf);
+    else draw();
+  });
 
-    /* write page HTML into iframe */
-    iframe.addEventListener('load', () => {
-      syncIframeScroll(iframe);
+  draw();
+})();
+
+/* ── INTERSECTION OBSERVER — FADE UP ────────────────────── */
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
     });
+  },
+  { threshold: 0.12 }
+);
 
-    const doc = iframe.contentDocument || iframe.contentWindow.document;
-    doc.open();
-    doc.write(`<!DOCTYPE html><html><head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      <base href="${location.origin}${location.pathname}">
-      ${styleBlob}
-      <style>
-        html,body{margin:0;padding:0;overflow:hidden!important;background:#0a0a0a;}
-        /* hide sticky nav inside glass */
-        nav,header{display:none!important;}
-        /* no cursor inside */
-        *{cursor:none!important;}
-      </style>
-    </head><body>${cloneRoot.innerHTML}</body></html>`);
-    doc.close();
+// Mark elements and observe
+document.querySelectorAll(
+  '.section-title, .section-label, .section-sub, ' +
+  '.project-card, .skill-category, .cert-card, ' +
+  '.tl-item, .oss-card, .about-card, .contact-item'
+).forEach(el => {
+  el.classList.add('fade-up');
+  observer.observe(el);
+});
 
-    cloneRoot._iframe = iframe;
-  }
+/* ── SKILL BAR TRIGGER ──────────────────────────────────── */
+// Re-trigger CSS animation when skill bars scroll into view
+const skillObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.animation = 'none';
+        e.target.offsetHeight; // reflow
+        e.target.style.animation = '';
+        skillObserver.unobserve(e.target);
+      }
+    });
+  },
+  { threshold: 0.5 }
+);
+document.querySelectorAll('.skill-fill').forEach(el => skillObserver.observe(el));
 
-  function syncIframeScroll(iframe) {
-    try {
-      const iwin = iframe.contentWindow;
-      if (!iwin) return;
-      iwin.scrollTo(0, window.scrollY);
-    } catch (e) { /* cross-origin guard */ }
-  }
+/* ── ACTIVE NAV LINK ────────────────────────────────────── */
+const sections  = document.querySelectorAll('section[id]');
+const navLinks  = document.querySelectorAll('.nav-links a');
 
-  /* ── Remap magnifier viewport ────────────── */
-  function updateMagTransform(x, y) {
-    if (!magEnabled) return;
-    const iframe = magInner.querySelector('iframe');
-    if (!iframe) return;
+const sectionObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.style.color = '');
+        const id = e.target.id;
+        const active = document.querySelector(`.nav-links a[href="#${id}"]`);
+        if (active) active.style.color = 'var(--accent)';
+      }
+    });
+  },
+  { rootMargin: '-40% 0px -55% 0px' }
+);
+sections.forEach(s => sectionObserver.observe(s));
 
-    /* scroll sync */
-    syncIframeScroll(iframe);
+/* ── CONTACT FORM ───────────────────────────────────────── */
+function handleForm(e) {
+  e.preventDefault();
+  const msg = document.getElementById('formMsg');
 
-    /* update iframe dimensions if window resized */
-    iframe.style.width  = window.innerWidth  + 'px';
-    iframe.style.height = window.innerHeight + 'px';
+  // Simulate submit (replace with Formspree / EmailJS endpoint)
+  msg.textContent = 'Message sent! I\'ll get back to you soon.';
+  msg.className = 'form-msg success';
+  e.target.reset();
 
-    /* 
-     * The iframe shows the full page at 1:1.
-     * We scale it by zoomLevel from a transform-origin
-     * that places the cursor position at the center of the lens.
-     *
-     * transform-origin (in iframe-space) = cursor position
-     * After scaling, the cursor maps to center of the MAG_SIZE circle.
-     */
-    const halfMag = MAG_SIZE / 2;
-    const ox = x;           /* origin x in page coords */
-    const oy = y;           /* origin y in page coords */
+  setTimeout(() => { msg.textContent = ''; msg.className = 'form-msg'; }, 5000);
+}
 
-    /* 
-     * We want: after scale, point (ox,oy) appears at center of magInner.
-     * magInner top-left is at (x - halfMag, y - halfMag) page coords.
-     * iframe top-left = 0,0. So iframe's offset inside magInner = -(x-halfMag), -(y-halfMag)?
-     * Easier: let CSS transform-origin do the work.
-     */
-    magInner.style.transformOrigin = `${ox}px ${oy}px`;
-    magInner.style.transform = `scale(${zoomLevel})`;
-    /* shift magInner so that (ox,oy)*scale ends up at lens center */
-    magInner.style.left = `${halfMag - ox * zoomLevel}px`;
-    magInner.style.top  = `${halfMag - oy * zoomLevel}px`;
-    magInner.style.transformOrigin = '0 0';
-  }
-
-  /* ── Animation loop ──────────────────────── */
-  const LERP_CURSOR = 0.18;
-  const LERP_DOT    = 0.38;
-
-  function lerp(a, b, t) { return a + (b - a) * t; }
+/* ── FOOTER UPTIME CLOCK ────────────────────────────────── */
+(function clock() {
+  const el = document.getElementById('uptime');
+  if (!el) return;
 
   function tick() {
-    /* smooth cursor ring */
-    curX = lerp(curX, mouseX, LERP_CURSOR);
-    curY = lerp(curY, mouseY, LERP_CURSOR);
-
-    /* snappy dot */
-    dotX = lerp(dotX, mouseX, LERP_DOT);
-    dotY = lerp(dotY, mouseY, LERP_DOT);
-
-    dot.style.left  = dotX + 'px';
-    dot.style.top   = dotY + 'px';
-    ring.style.left = curX + 'px';
-    ring.style.top  = curY + 'px';
-
-    if (magEnabled) {
-      mag.style.left = curX + 'px';
-      mag.style.top  = curY + 'px';
-      updateMagTransform(mouseX, mouseY);
-    }
-
-    rafId = requestAnimationFrame(tick);
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
+    el.textContent = `SYSTEM TIME ${h}:${m}:${s}`;
   }
-
-  rafId = requestAnimationFrame(tick);
-
-  /* ── Touch: disable on mobile ────────────── */
-  if ('ontouchstart' in window) {
-    disableMag();
-    btn.style.display = 'none';
-    dot.style.display = 'none';
-    ring.style.display = 'none';
-    document.body.style.cursor = 'auto';
-  }
-
+  tick();
+  setInterval(tick, 1000);
 })();
+
+/* ── SMOOTH ANCHOR SCROLL ───────────────────────────────── */
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const id = link.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+
+    const navH = parseInt(getComputedStyle(document.documentElement)
+      .getPropertyValue('--nav-h'), 10) || 64;
+
+    window.scrollTo({
+      top: target.offsetTop - navH,
+      behavior: 'smooth',
+    });
+  });
+});
