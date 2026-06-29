@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — Embedded Systems Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+  <nav class="nav" id="navbar">
+    <div class="nav-inner">
+      <a class="nav-logo" href="#hero">
+        <span class="logo-bracket">&lt;</span>
+        <span class="logo-name">YourName</span>
+        <span class="logo-bracket">/&gt;</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#timeline">Timeline</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <span class="theme-icon">☀</span>
+        </button>
+        <a href="#contact" class="btn btn-sm">Hire Me</a>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- mobile drawer -->
+    <div class="mobile-menu" id="mobileMenu">
+      <ul>
+        <li><a href="#about" onclick="closeMobile()">About</a></li>
+        <li><a href="#projects" onclick="closeMobile()">Projects</a></li>
+        <li><a href="#skills" onclick="closeMobile()">Skills</a></li>
+        <li><a href="#timeline" onclick="closeMobile()">Timeline</a></li>
+        <li><a href="#contact" onclick="closeMobile()">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+  <section class="hero" id="hero">
+    <!-- Oscilloscope canvas -->
+    <canvas id="oscilloscope" class="osc-canvas" aria-hidden="true"></canvas>
+
+    <!-- Grid overlay -->
+    <div class="osc-grid" aria-hidden="true"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="status-dot"></span>
+        <span class="mono">SYSTEM ONLINE — EMBEDDED ENGINEER</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="line1">Building at the</span>
+        <span class="line2 accent">Metal Level.</span>
+      </h1>
+
+      <p class="hero-sub">
+        I design, program, and debug embedded systems — from bare-metal firmware
+        to real-time OS integration. RTOS, MCU, PCB — this is where software
+        meets physics.
+      </p>
+
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary">View Projects</a>
+        <a href="resume.pdf" class="btn btn-ghost" target="_blank">Download CV</a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">12+</span>
+          <span class="stat-label mono">Projects Shipped</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">5+</span>
+          <span class="stat-label mono">MCU Families</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">3</span>
+          <span class="stat-label mono">Years Experience</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-indicator">
+      <span class="mono">SCROLL</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ ABOUT ═══════════════════════════ -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-label mono">// 01_ABOUT</div>
+
+      <div class="about-grid">
+        <div class="about-text">
+          <h2 class="section-title">Who I Am</h2>
+          <p>
+            I'm an Embedded Systems Engineer with a passion for writing efficient,
+            deterministic code that runs on constrained hardware. I specialize in
+            bridging the gap between hardware and software — reading schematics,
+            writing HAL drivers, and squeezing performance out of microcontrollers.
+          </p>
+          <p>
+            When I'm not debugging JTAG traces, I'm exploring low-power design,
+            wireless protocols, and real-time signal processing.
+          </p>
+
+          <div class="about-chips">
+            <span class="chip">ARM Cortex-M</span>
+            <span class="chip">FreeRTOS</span>
+            <span class="chip">RTOS</span>
+            <span class="chip">CAN Bus</span>
+            <span class="chip">SPI / I2C / UART</span>
+            <span class="chip">PCB Design</span>
+            <span class="chip">C / C++</span>
+            <span class="chip">Python</span>
+          </div>
+        </div>
+
+        <div class="about-card">
+          <div class="card-header mono">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="card-title">profile.c</span>
+          </div>
+          <pre class="code-block"><code><span class="c-keyword">typedef struct</span> {
+  <span class="c-type">char</span>   *name;
+  <span class="c-type">char</span>   *role;
+  <span class="c-type">char</span>   *location;
+  <span class="c-type">bool</span>    open_to_work;
+  <span class="c-type">uint8_t</span> coffee_per_day;
+} <span class="c-accent">Engineer_t</span>;
+
+<span class="c-keyword">const</span> <span class="c-accent">Engineer_t</span> me = {
+  .name         = <span class="c-str">"Your Name"</span>,
+  .role         = <span class="c-str">"Embedded Engineer"</span>,
+  .location     = <span class="c-str">"Your City, IN"</span>,
+  .open_to_work = <span class="c-accent">true</span>,
+  .coffee_per_day = <span class="c-num">3</span>
+};</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ PROJECTS ═══════════════════════════ -->
+  <section class="section section-alt" id="projects">
+    <div class="container">
+      <div class="section-label mono">// 02_PROJECTS</div>
+      <h2 class="section-title">What I've Built</h2>
+      <p class="section-sub">A selection of embedded systems projects — from idea to hardware.</p>
+
+      <div class="projects-grid">
+
+        <!-- Project 1 -->
+        <article class="project-card" data-category="firmware">
+          <div class="project-header">
+            <div class="project-icon">⚡</div>
+            <div class="project-meta">
+              <span class="chip chip-accent mono">FreeRTOS</span>
+              <span class="chip mono">STM32</span>
+            </div>
+          </div>
+          <h3 class="project-title">Smart Energy Monitor</h3>
+          <p class="project-desc">
+            Real-time energy monitoring system using STM32F4 with FreeRTOS tasks
+            managing ADC sampling, OLED display, and UART data streaming at 1 kHz.
+          </p>
+          <div class="project-specs">
+            <span class="spec"><span class="mono accent">MCU:</span> STM32F407</span>
+            <span class="spec"><span class="mono accent">RTOS:</span> FreeRTOS v10</span>
+            <span class="spec"><span class="mono accent">Interface:</span> SPI, I2C</span>
+          </div>
+          <div class="project-links">
+            <a href="#" class="project-link">GitHub →</a>
+            <a href="#" class="project-link">Demo →</a>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="project-card" data-category="rtos">
+          <div class="project-header">
+            <div class="project-icon">🤖</div>
+            <div class="project-meta">
+              <span class="chip chip-amber mono">Motor Control</span>
+              <span class="chip mono">ESP32</span>
+            </div>
+          </div>
+          <h3 class="project-title">Autonomous Line Follower</h3>
+          <p class="project-desc">
+            PID-controlled line follower robot built on ESP32, with sensor fusion
+            from 8-channel IR array, encoder feedback, and BLE telemetry dashboard.
+          </p>
+          <div class="project-specs">
+            <span class="spec"><span class="mono accent">MCU:</span> ESP32-S3</span>
+            <span class="spec"><span class="mono accent">Control:</span> PID Loop</span>
+            <span class="spec"><span class="mono accent">Comm:</span> BLE 5.0</span>
+          </div>
+          <div class="project-links">
+            <a href="#" class="project-link">GitHub →</a>
+            <a href="#" class="project-link">Video →</a>
+          </div>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="project-card" data-category="hardware">
+          <div class="project-header">
+            <div class="project-icon">📡</div>
+            <div class="project-meta">
+              <span class="chip chip-accent mono">LoRa</span>
+              <span class="chip mono">Low Power</span>
+            </div>
+          </div>
+          <h3 class="project-title">LoRa Sensor Network</h3>
+          <p class="project-desc">
+            Distributed IoT sensor network with LoRaWAN nodes reporting temperature,
+            humidity, and soil data. Battery life exceeds 2 years on 2 AA cells.
+          </p>
+          <div class="project-specs">
+            <span class="spec"><span class="mono accent">MCU:</span> ATtiny3217</span>
+            <span class="spec"><span class="mono accent">Radio:</span> SX1276</span>
+            <span class="spec"><span class="mono accent">Power:</span> &lt;10µA sleep</span>
+          </div>
+          <div class="project-links">
+            <a href="#" class="project-link">GitHub →</a>
+          </div>
+        </article>
+
+        <!-- Project 4 -->
+        <article class="project-card" data-category="firmware">
+          <div class="project-header">
+            <div class="project-icon">🔊</div>
+            <div class="project-meta">
+              <span class="chip chip-amber mono">DSP</span>
+              <span class="chip mono">Bare Metal</span>
+            </div>
+          </div>
+          <h3 class="project-title">Audio FFT Analyzer</h3>
+          <p class="project-desc">
+            Real-time audio spectrum analyzer using ARM CMSIS-DSP on Cortex-M4F.
+            128-point FFT running at 44.1 kHz sample rate with LED matrix display.
+          </p>
+          <div class="project-specs">
+            <span class="spec"><span class="mono accent">MCU:</span> STM32F446</span>
+            <span class="spec"><span class="mono accent">DSP:</span> CMSIS-DSP</span>
+            <span class="spec"><span class="mono accent">Audio:</span> I2S / SAI</span>
+          </div>
+          <div class="project-links">
+            <a href="#" class="project-link">GitHub →</a>
+            <a href="#" class="project-link">Demo →</a>
+          </div>
+        </article>
+
+        <!-- Project 5 -->
+        <article class="project-card" data-category="hardware">
+          <div class="project-header">
+            <div class="project-icon">🚗</div>
+            <div class="project-meta">
+              <span class="chip chip-accent mono">CAN Bus</span>
+              <span class="chip mono">Automotive</span>
+            </div>
+          </div>
+          <h3 class="project-title">CAN Bus Data Logger</h3>
+          <p class="project-desc">
+            Automotive CAN bus data logger with SD card logging, GPS timestamping,
+            and real-time decoding of OBD-II PIDs. Designed as a PCB in KiCad.
+          </p>
+          <div class="project-specs">
+            <span class="spec"><span class="mono accent">MCU:</span> STM32G4</span>
+            <span class="spec"><span class="mono accent">Bus:</span> CAN FD</span>
+            <span class="spec"><span class="mono accent">Storage:</span> SD / FAT32</span>
+          </div>
+          <div class="project-links">
+            <a href="#" class="project-link">GitHub →</a>
+            <a href="#" class="project-link">KiCad →</a>
+          </div>
+        </article>
+
+        <!-- Project 6 -->
+        <article class="project-card" data-category="rtos">
+          <div class="project-header">
+            <div class="project-icon">🌡</div>
+            <div class="project-meta">
+              <span class="chip chip-amber mono">MODBUS</span>
+              <span class="chip mono">Industrial</span>
+            </div>
+          </div>
+          <h3 class="project-title">Industrial Temp Controller</h3>
+          <p class="project-desc">
+            Multi-zone temperature controller with Modbus RTU slave interface,
+            PWM heater control, safety watchdog, and EEPROM config persistence.
+          </p>
+          <div class="project-specs">
+            <span class="spec"><span class="mono accent">MCU:</span> PIC32MX</span>
+            <span class="spec"><span class="mono accent">Protocol:</span> Modbus RTU</span>
+            <span class="spec"><span class="mono accent">I/O:</span> RS-485</span>
+          </div>
+          <div class="project-links">
+            <a href="#" class="project-link">GitHub →</a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ SKILLS ═══════════════════════════ -->
+  <section class="section" id="skills">
+    <div class="container">
+      <div class="section-label mono">// 03_SKILLS</div>
+      <h2 class="section-title">Tech Stack</h2>
+      <p class="section-sub">From silicon to software — the tools I use daily.</p>
+
+      <div class="skills-grid">
+
+        <div class="skill-category">
+          <div class="skill-cat-header">
+            <span class="skill-cat-icon">🔧</span>
+            <h3 class="mono">Microcontrollers</h3>
+          </div>
+          <ul class="skill-list">
+            <li><span class="skill-name">STM32 (F0–F7, G0–G4, H7)</span><div class="skill-bar"><div class="skill-fill" style="--pct:92%"></div></div></li>
+            <li><span class="skill-name">ESP32 / ESP8266</span><div class="skill-bar"><div class="skill-fill" style="--pct:88%"></div></div></li>
+            <li><span class="skill-name">AVR / ATmega / ATtiny</span><div class="skill-bar"><div class="skill-fill" style="--pct:85%"></div></div></li>
+            <li><span class="skill-name">PIC32 / dsPIC</span><div class="skill-bar"><div class="skill-fill" style="--pct:72%"></div></div></li>
+            <li><span class="skill-name">Nordic nRF52</span><div class="skill-bar"><div class="skill-fill" style="--pct:70%"></div></div></li>
+          </ul>
+        </div>
+
+        <div class="skill-category">
+          <div class="skill-cat-header">
+            <span class="skill-cat-icon">💻</span>
+            <h3 class="mono">Languages & OS</h3>
+          </div>
+          <ul class="skill-list">
+            <li><span class="skill-name">C (Embedded / Bare Metal)</span><div class="skill-bar"><div class="skill-fill" style="--pct:95%"></div></div></li>
+            <li><span class="skill-name">C++</span><div class="skill-bar"><div class="skill-fill" style="--pct:80%"></div></div></li>
+            <li><span class="skill-name">FreeRTOS / Zephyr</span><div class="skill-bar"><div class="skill-fill" style="--pct:85%"></div></div></li>
+            <li><span class="skill-name">Python (scripting / test)</span><div class="skill-bar"><div class="skill-fill" style="--pct:78%"></div></div></li>
+            <li><span class="skill-name">Assembly (ARM / AVR)</span><div class="skill-bar"><div class="skill-fill" style="--pct:65%"></div></div></li>
+          </ul>
+        </div>
+
+        <div class="skill-category">
+          <div class="skill-cat-header">
+            <span class="skill-cat-icon">📡</span>
+            <h3 class="mono">Protocols & Buses</h3>
+          </div>
+          <ul class="skill-list">
+            <li><span class="skill-name">UART / SPI / I2C</span><div class="skill-bar"><div class="skill-fill" style="--pct:96%"></div></div></li>
+            <li><span class="skill-name">CAN / CAN FD</span><div class="skill-bar"><div class="skill-fill" style="--pct:82%"></div></div></li>
+            <li><span class="skill-name">LoRaWAN / BLE / Zigbee</span><div class="skill-bar"><div class="skill-fill" style="--pct:75%"></div></div></li>
+            <li><span class="skill-name">Modbus RTU / TCP</span><div class="skill-bar"><div class="skill-fill" style="--pct:78%"></div></div></li>
+            <li><span class="skill-name">USB (HID / CDC / DFU)</span><div class="skill-bar"><div class="skill-fill" style="--pct:70%"></div></div></li>
+          </ul>
+        </div>
+
+        <div class="skill-category">
+          <div class="skill-cat-header">
+            <span class="skill-cat-icon">🛠</span>
+            <h3 class="mono">Tools & Software</h3>
+          </div>
+          <ul class="skill-list">
+            <li><span class="skill-name">STM32CubeIDE / CubeMX</span><div class="skill-bar"><div class="skill-fill" style="--pct:90%"></div></div></li>
+            <li><span class="skill-name">KiCad (Schematic + PCB)</span><div class="skill-bar"><div class="skill-fill" style="--pct:80%"></div></div></li>
+            <li><span class="skill-name">Oscilloscope / Logic Analyzer</span><div class="skill-bar"><div class="skill-fill" style="--pct:88%"></div></div></li>
+            <li><span class="skill-name">GCC / CMake / Make</span><div class="skill-bar"><div class="skill-fill" style="--pct:82%"></div></div></li>
+            <li><span class="skill-name">Git / JTAG / GDB / OpenOCD</span><div class="skill-bar"><div class="skill-fill" style="--pct:85%"></div></div></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Software tools icon grid -->
+      <div class="tools-row">
+        <div class="tool-badge">STM32CubeIDE</div>
+        <div class="tool-badge">KiCad</div>
+        <div class="tool-badge">VS Code</div>
+        <div class="tool-badge">FreeRTOS</div>
+        <div class="tool-badge">Zephyr</div>
+        <div class="tool-badge">PlatformIO</div>
+        <div class="tool-badge">GDB</div>
+        <div class="tool-badge">OpenOCD</div>
+        <div class="tool-badge">Segger J-Link</div>
+        <div class="tool-badge">Logic2</div>
+        <div class="tool-badge">Wireshark</div>
+        <div class="tool-badge">Git</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ CERTIFICATIONS ═══════════════════════════ -->
+  <section class="section section-alt" id="certs">
+    <div class="container">
+      <div class="section-label mono">// 04_CERTIFICATIONS</div>
+      <h2 class="section-title">Credentials</h2>
+
+      <div class="certs-grid">
+        <div class="cert-card">
+          <div class="cert-icon">🎓</div>
+          <h4>B.Tech — Electronics & Communication</h4>
+          <p class="cert-org mono">Your University, 2023</p>
+          <p class="cert-desc">Specialization in embedded systems, VLSI design, and signal processing.</p>
+        </div>
+        <div class="cert-card">
+          <div class="cert-icon">🏅</div>
+          <h4>ARM Cortex-M Architecture</h4>
+          <p class="cert-org mono">Udemy / Kiran Nayak · 2022</p>
+          <p class="cert-desc">Bare-metal programming, exception model, memory map, and peripheral drivers.</p>
+        </div>
+        <div class="cert-card">
+          <div class="cert-icon">🏅</div>
+          <h4>RTOS Fundamentals</h4>
+          <p class="cert-org mono">Coursera · 2023</p>
+          <p class="cert-desc">Task scheduling, semaphores, queues, and priority inversion handling in FreeRTOS.</p>
+        </div>
+        <div class="cert-card">
+          <div class="cert-icon">🏅</div>
+          <h4>PCB Design with KiCad</h4>
+          <p class="cert-org mono">Self-study · 2022</p>
+          <p class="cert-desc">4-layer PCB routing, DRC checks, gerber generation, and JLC fabrication.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ TIMELINE ═══════════════════════════ -->
+  <section class="section" id="timeline">
+    <div class="container">
+      <div class="section-label mono">// 05_TIMELINE</div>
+      <h2 class="section-title">Journey</h2>
+
+      <div class="timeline">
+
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-date mono">2024 – Present</div>
+            <h4>Embedded Firmware Engineer</h4>
+            <p class="tl-org">Some Company / Startup</p>
+            <p>Writing firmware for industrial IoT nodes using STM32 + FreeRTOS.
+               Designed the CAN bus driver stack from scratch; reduced boot time by 40%.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-date mono">2023</div>
+            <h4>Embedded Intern</h4>
+            <p class="tl-org">Electronics Firm</p>
+            <p>Developed sensor fusion firmware for an IMU-based motion detector.
+               Implemented Kalman filter on ARM Cortex-M0+ with no FPU.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-date mono">2019 – 2023</div>
+            <h4>B.Tech — Electronics & Communication</h4>
+            <p class="tl-org">Your University</p>
+            <p>Graduated with distinction. Final year project: LoRa-based
+               precision agriculture monitoring system deployed across 5 acres.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-date mono">2018</div>
+            <h4>First MCU — Arduino UNO</h4>
+            <p class="tl-org">Personal Lab</p>
+            <p>Built first embedded project: a 7-segment clock with DS3231 RTC.
+               Got hooked on register-level programming. Never looked back.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ OPEN SOURCE ═══════════════════════════ -->
+  <section class="section section-alt" id="oss">
+    <div class="container">
+      <div class="section-label mono">// 06_OPEN_SOURCE</div>
+      <h2 class="section-title">Open Source</h2>
+      <p class="section-sub">Libraries and tools I've released for the embedded community.</p>
+
+      <div class="oss-grid">
+        <div class="oss-card">
+          <div class="oss-header">
+            <span class="oss-icon">📦</span>
+            <div>
+              <h4>stm32-hal-utils</h4>
+              <span class="mono small accent">C Library</span>
+            </div>
+          </div>
+          <p>Lightweight utility wrappers for STM32 HAL — ring buffers, soft timers, and non-blocking delay helpers.</p>
+          <div class="oss-stats">
+            <span>⭐ 142</span>
+            <span>🍴 31</span>
+            <a href="#" class="project-link">View →</a>
+          </div>
+        </div>
+
+        <div class="oss-card">
+          <div class="oss-header">
+            <span class="oss-icon">📦</span>
+            <div>
+              <h4>freertos-task-monitor</h4>
+              <span class="mono small accent">C / Python</span>
+            </div>
+          </div>
+          <p>Runtime FreeRTOS task stack and CPU usage monitor with UART-based host visualization tool.</p>
+          <div class="oss-stats">
+            <span>⭐ 87</span>
+            <span>🍴 18</span>
+            <a href="#" class="project-link">View →</a>
+          </div>
+        </div>
+
+        <div class="oss-card">
+          <div class="oss-header">
+            <span class="oss-icon">📦</span>
+            <div>
+              <h4>kicad-component-lib</h4>
+              <span class="mono small accent">KiCad</span>
+            </div>
+          </div>
+          <p>Custom KiCad symbol and footprint library with 200+ verified components used in production designs.</p>
+          <div class="oss-stats">
+            <span>⭐ 210</span>
+            <span>🍴 54</span>
+            <a href="#" class="project-link">View →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ CONTACT ═══════════════════════════ -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="section-label mono">// 07_CONTACT</div>
+      <h2 class="section-title">Let's Connect</h2>
+      <p class="section-sub">Available for freelance projects, full-time roles, and open source collaboration.</p>
+
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="contact-item">
+            <span class="contact-icon">📧</span>
+            <div>
+              <p class="mono small">EMAIL</p>
+              <a href="mailto:you@example.com">you@example.com</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">💼</span>
+            <div>
+              <p class="mono small">LINKEDIN</p>
+              <a href="#" target="_blank">linkedin.com/in/yourname</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">🐙</span>
+            <div>
+              <p class="mono small">GITHUB</p>
+              <a href="#" target="_blank">github.com/yourname</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">📍</span>
+            <div>
+              <p class="mono small">LOCATION</p>
+              <span>Your City, India</span>
+            </div>
+          </div>
+        </div>
+
+        <form class="contact-form" onsubmit="handleForm(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="mono" for="name">NAME</label>
+              <input type="text" id="name" placeholder="John Doe" required />
+            </div>
+            <div class="form-group">
+              <label class="mono" for="email">EMAIL</label>
+              <input type="email" id="email" placeholder="john@example.com" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="mono" for="subject">SUBJECT</label>
+            <input type="text" id="subject" placeholder="Project inquiry..." />
+          </div>
+          <div class="form-group">
+            <label class="mono" for="message">MESSAGE</label>
+            <textarea id="message" rows="5" placeholder="Tell me about your project..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Send Message →</button>
+          <div id="formMsg" class="form-msg"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p class="mono small">
+        <span class="accent">©</span> 2025 YourName — Built with ❤️ &amp; too much caffeine
+      </p>
+      <p class="mono small dimmed">
+        <span id="uptime"></span>
+      </p>
+      <div class="footer-links">
+        <a href="https://github.com" target="_blank">GitHub</a>
+        <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+        <a href="resume.pdf" target="_blank">Resume</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
