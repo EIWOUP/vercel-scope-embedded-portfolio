@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bhavik | Embedded Systems Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════ NAV ═══ -->
+  <nav class="nav" id="nav">
+    <div class="nav-logo">
+      <span class="logo-bracket">&lt;</span>
+      <span class="logo-name">BK</span>
+      <span class="logo-bracket">/&gt;</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#hero" class="nav-link active">Home</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#projects" class="nav-link">Projects</a></li>
+      <li><a href="#skills" class="nav-link">Skills</a></li>
+      <li><a href="#timeline" class="nav-link">Timeline</a></li>
+      <li><a href="#blog" class="nav-link">Blog</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Hire Me</a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ══════════════════════════════════════════ HERO ═══ -->
+  <section class="hero" id="hero">
+    <canvas id="oscilloscope" class="osc-canvas"></canvas>
+    <div class="hero-scanlines"></div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span>Available for Projects</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="title-line">Embedded</span>
+        <span class="title-line accent">Systems</span>
+        <span class="title-line">Engineer</span>
+      </h1>
+      <p class="hero-sub">
+        <span class="mono">&gt; </span>Building firmware, PCBs, and IoT solutions — from bare-metal to production.
+      </p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">8+</span>
+          <span class="stat-label">Projects</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">5+</span>
+          <span class="stat-label">MCUs</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">3+</span>
+          <span class="stat-label">Yrs Coding</span>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <a href="#projects" class="btn btn-primary">View Projects</a>
+        <a href="#contact" class="btn btn-ghost">Get In Touch</a>
+      </div>
+    </div>
+    <div class="hero-terminal">
+      <div class="terminal-bar">
+        <span class="tb-dot red"></span>
+        <span class="tb-dot yellow"></span>
+        <span class="tb-dot green"></span>
+        <span class="tb-title">bhavik@embedded:~$</span>
+      </div>
+      <div class="terminal-body" id="terminal-body"></div>
+    </div>
+    <div class="scroll-hint">
+      <span class="mono">scroll_down()</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ ABOUT ═══ -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-label"><span class="mono">// 01</span> About Me</div>
+      <div class="about-grid">
+        <div class="about-text">
+          <h2 class="section-title">Bridging Hardware <br/><span class="accent">& Software</span></h2>
+          <p>I'm an embedded systems enthusiast and MCA student at LJ University, Ahmedabad — obsessed with making hardware do clever things. I work at the intersection of low-level firmware, circuit design, and real-time systems.</p>
+          <p>From blinking LEDs to full IoT pipelines, I enjoy every layer of the stack — from reading datasheets at 2am to seeing a PCB power up for the first time.</p>
+          <div class="about-chips">
+            <span class="chip">ARM Cortex-M</span>
+            <span class="chip">RTOS</span>
+            <span class="chip">PCB Design</span>
+            <span class="chip">IoT</span>
+            <span class="chip">C / C++</span>
+            <span class="chip">Python</span>
+          </div>
+          <a href="#" class="btn btn-outline">Download Resume ↓</a>
+        </div>
+        <div class="about-card">
+          <div class="acard-header">
+            <span class="mono acard-id">SYS_INFO.h</span>
+          </div>
+          <div class="acard-body">
+            <div class="info-row">
+              <span class="info-key">name</span>
+              <span class="info-val">"Bhavik K."</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">role</span>
+              <span class="info-val">"Embedded Eng."</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">location</span>
+              <span class="info-val">"Ahmedabad, IN"</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">education</span>
+              <span class="info-val">"MCA, LJ Univ."</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">focus</span>
+              <span class="info-val">"Firmware + IoT"</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">status</span>
+              <span class="info-val accent-green">"open_to_work"</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ PROJECTS ═══ -->
+  <section class="section section-dark" id="projects">
+    <div class="container">
+      <div class="section-label"><span class="mono">// 02</span> Projects</div>
+      <h2 class="section-title">What I've <span class="accent">Built</span></h2>
+      <p class="section-desc">Real hardware, real problems, real solutions. Every project runs on actual silicon.</p>
+
+      <div class="proj-filter">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="iot">IoT</button>
+        <button class="filter-btn" data-filter="firmware">Firmware</button>
+        <button class="filter-btn" data-filter="pcb">PCB</button>
+        <button class="filter-btn" data-filter="rtos">RTOS</button>
+      </div>
+
+      <div class="projects-grid" id="projects-grid">
+
+        <!-- PROJECT CARD 1 -->
+        <div class="proj-card featured" data-category="iot firmware">
+          <div class="proj-badge">⭐ Featured</div>
+          <div class="proj-slider" id="slider-1">
+            <div class="slider-track" id="track-1">
+              <div class="slide">
+                <div class="slide-img-wrap">
+                  <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80" alt="Smart Environment Monitor - Board" />
+                </div>
+              </div>
+              <div class="slide">
+                <div class="slide-img-wrap">
+                  <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80" alt="Smart Environment Monitor - Setup" />
+                </div>
+              </div>
+              <div class="slide">
+                <div class="slide-img-wrap">
+                  <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80" alt="Smart Environment Monitor - Dashboard" />
+                </div>
+              </div>
+            </div>
+            <button class="slide-btn prev" onclick="slideProj('track-1','dots-1',-1)">&#8249;</button>
+            <button class="slide-btn next" onclick="slideProj('track-1','dots-1',1)">&#8250;</button>
+            <div class="slide-dots" id="dots-1">
+              <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+          </div>
+          <div class="proj-info">
+            <div class="proj-meta">
+              <span class="proj-tag iot">IoT</span>
+              <span class="proj-tag firmware">Firmware</span>
+              <span class="proj-lang">C / ESP-IDF</span>
+            </div>
+            <h3 class="proj-title">Smart Environment Monitor</h3>
+            <p class="proj-desc">Real-time air quality, temperature, and humidity monitoring station built on ESP32. Sends data to MQTT broker, visualized via custom dashboard. Runs FreeRTOS tasks for sensor polling and WiFi management.</p>
+            <div class="proj-keypoints">
+              <div class="kp-title">Key Highlights</div>
+              <ul class="kp-list">
+                <li>FreeRTOS multi-task architecture — sensor, comms, display tasks</li>
+                <li>Low-power deep sleep with RTC wake on schedule</li>
+                <li>OTA firmware updates over MQTT</li>
+                <li>BME680 + CCS811 dual-sensor fusion</li>
+              </ul>
+            </div>
+            <div class="proj-links">
+              <a href="#" class="proj-link">GitHub →</a>
+              <a href="#" class="proj-link ghost">Live Demo →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT CARD 2 -->
+        <div class="proj-card" data-category="rtos firmware">
+          <div class="proj-slider" id="slider-2">
+            <div class="slider-track" id="track-2">
+              <div class="slide">
+                <div class="slide-img-wrap">
+                  <img src="https://images.unsplash.com/photo-1597852074816-d933c7d2b988?w=800&q=80" alt="RTOS Task Scheduler" />
+                </div>
+              </div>
+              <div class="slide">
+                <div class="slide-img-wrap">
+                  <img src="https://images.unsplash.com/photo-1562408590-e32931084e23?w=800&q=80" alt="RTOS Logic Analyzer" />
+                </div>
+              </div>
+            </div>
+            <button class="slide-btn prev" onclick="slideProj('track-2','dots-2',-1)">&#8249;</button>
+            <button class="slide-btn next" onclick="slideProj('track-2','dots-2',1)">&#8250;</button>
+            <div class="slide-dots" id="dots-2">
+              <span class="dot active"></span><span class="dot"></span>
+            </div>
+          </div>
+          <div class="proj-info">
+            <div class="proj-meta">
+              <span class="proj-tag rtos">RTOS</span>
+              <span class="proj-tag firmware">Firmware</span>
+              <span class="proj-lang">C / STM32</span>
+            </div>
+            <h3 class="proj-title">RTOS Task Scheduler Demo</h3>
+            <p class="proj-desc">Custom priority-based cooperative task scheduler built from scratch on STM32F4. Demonstrates context switching, semaphores, and inter-task communication without using an OS library.</p>
+            <div class="proj-keypoints">
+              <div class="kp-title">Key Highlights</div>
+              <ul class="kp-list">
+                <li>Bare-metal context switch using Cortex-M SysTick</li>
+                <li>Binary semaphore and mutex primitives</li>
+                <li>Task priority inheritance for deadlock prevention</li>
+              </ul>
+            </div>
+            <div class="proj-links">
+              <a href="#" class="proj-link">GitHub →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT CARD 3 -->
+        <div class="proj-card" data-category="pcb">
+          <div class="proj-slider" id="slider-3">
+            <div class="slider-track" id="track-3">
+              <div class="slide">
+                <div class="slide-img-wrap">
+                  <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80" alt="Custom PCB" />
+                </div>
+              </div>
+              <div class="slide">
+                <div class="slide-img-wrap">
+                  <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&q=80" alt="PCB Schematic" />
+                </div>
+              </div>
+            </div>
+            <button class="slide-btn prev" onclick="slideProj('track-3','dots-3',-1)">&#8249;</button>
+            <button class="slide-btn next" onclick="slideProj('track-3','dots-3',1)">&#8250;</button>
+            <div class="slide-dots" id="dots-3">
+              <span class="dot active"></span><span class="dot"></span>
+            </div>
+          </div>
+          <div class="proj-info">
+            <div class="proj-meta">
+              <span class="proj-tag pcb">PCB</span>
+              <span class="proj-lang">KiCad</span>
+            </div>
+            <h3 class="proj-title">4-Layer Motor Driver PCB</h3>
+            <p class="proj-desc">Custom 4-layer PCB for a 3-phase BLDC motor driver. Designed in KiCad with proper power plane separation, controlled impedance traces for high-frequency switching, and thermal via arrays.</p>
+            <div class="proj-keypoints">
+              <div class="kp-title">Key Highlights</div>
+              <ul class="kp-list">
+                <li>DRV8323 gate driver with SPI control interface</li>
+                <li>Current sensing via INA240 with 80V/V gain</li>
+                <li>EMI filtering and TVS protection on all inputs</li>
+              </ul>
+            </div>
+            <div class="proj-links">
+              <a href="#" class="proj-link">GitHub →</a>
+              <a href="#" class="proj-link ghost">Gerbers →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT CARD 4 -->
+        <div class="proj-card" data-category="iot">
+          <div class="proj-slider" id="slider-4">
+            <div class="slider-track" id="track-4">
+              <div class="slide">
+                <div class="slide-img-wrap">
+                  <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80" alt="LoRa Gateway" />
+                </div>
+              </div>
+              <div class="slide">
+                <div class="slide-img-wrap">
+                  <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80" alt="LoRa Network" />
+                </div>
+              </div>
+            </div>
+            <button class="slide-btn prev" onclick="slideProj('track-4','dots-4',-1)">&#8249;</button>
+            <button class="slide-btn next" onclick="slideProj('track-4','dots-4',1)">&#8250;</button>
+            <div class="slide-dots" id="dots-4">
+              <span class="dot active"></span><span class="dot"></span>
+            </div>
+          </div>
+          <div class="proj-info">
+            <div class="proj-meta">
+              <span class="proj-tag iot">IoT</span>
+              <span class="proj-lang">C++ / LoRaWAN</span>
+            </div>
+            <h3 class="proj-title">LoRa Mesh Sensor Network</h3>
+            <p class="proj-desc">Long-range sensor mesh using SX1276 LoRa modules across STM32L0 nodes. Custom MAC layer with TDMA scheduling for synchronized multi-node transmission without collisions.</p>
+            <div class="proj-keypoints">
+              <div class="kp-title">Key Highlights</div>
+              <ul class="kp-list">
+                <li>Custom TDMA MAC — no LoRaWAN stack dependency</li>
+                <li>Achieved 5km range with SF12/125kHz</li>
+                <li>Node power: 2.1μA sleep, 12mA active</li>
+              </ul>
+            </div>
+            <div class="proj-links">
+              <a href="#" class="proj-link">GitHub →</a>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end projects-grid -->
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ SKILLS ═══ -->
+  <section class="section" id="skills">
+    <div class="container">
+      <div class="section-label"><span class="mono">// 03</span> Skills & Tools</div>
+      <h2 class="section-title">My <span class="accent">Toolbox</span></h2>
+      <p class="section-desc">Languages, frameworks, hardware platforms, and software I use daily.</p>
+
+      <div class="skills-grid">
+
+        <div class="skill-category">
+          <div class="skill-cat-header">
+            <span class="skill-icon">⚙️</span>
+            <span class="skill-cat-name">Microcontrollers</span>
+          </div>
+          <div class="skill-items">
+            <div class="skill-item">
+              <span class="skill-name">STM32 (F1/F4/L0)</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:90%"></div></div>
+              <span class="skill-pct">90%</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">ESP32 / ESP-IDF</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:85%"></div></div>
+              <span class="skill-pct">85%</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">Arduino (ATmega)</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:95%"></div></div>
+              <span class="skill-pct">95%</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">RP2040</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:70%"></div></div>
+              <span class="skill-pct">70%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <div class="skill-cat-header">
+            <span class="skill-icon">💻</span>
+            <span class="skill-cat-name">Languages</span>
+          </div>
+          <div class="skill-items">
+            <div class="skill-item">
+              <span class="skill-name">C / C++</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:92%"></div></div>
+              <span class="skill-pct">92%</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">Python</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:80%"></div></div>
+              <span class="skill-pct">80%</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">Assembly (ARM)</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:60%"></div></div>
+              <span class="skill-pct">60%</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">Rust (embedded)</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:40%"></div></div>
+              <span class="skill-pct">40%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <div class="skill-cat-header">
+            <span class="skill-icon">🔌</span>
+            <span class="skill-cat-name">Protocols & OS</span>
+          </div>
+          <div class="skill-items">
+            <div class="skill-item">
+              <span class="skill-name">I2C / SPI / UART</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:95%"></div></div>
+              <span class="skill-pct">95%</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">FreeRTOS</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:82%"></div></div>
+              <span class="skill-pct">82%</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">MQTT / LoRaWAN</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:78%"></div></div>
+              <span class="skill-pct">78%</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">USB / CAN / LIN</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:65%"></div></div>
+              <span class="skill-pct">65%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <div class="skill-cat-header">
+            <span class="skill-icon">🛠️</span>
+            <span class="skill-cat-name">Software & Tools</span>
+          </div>
+          <div class="skill-items">
+            <div class="skill-item">
+              <span class="skill-name">KiCad (PCB)</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:80%"></div></div>
+              <span class="skill-pct">80%</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">STM32CubeIDE</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:88%"></div></div>
+              <span class="skill-pct">88%</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">GDB / OpenOCD</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:75%"></div></div>
+              <span class="skill-pct">75%</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">Git / GitHub</span>
+              <div class="skill-bar"><div class="skill-fill" style="--pct:90%"></div></div>
+              <span class="skill-pct">90%</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end skills-grid -->
+
+      <div class="tools-row">
+        <div class="tool-badge">Oscilloscope</div>
+        <div class="tool-badge">Logic Analyzer</div>
+        <div class="tool-badge">JTAG / SWD</div>
+        <div class="tool-badge">Soldering Iron</div>
+        <div class="tool-badge">Multimeter</div>
+        <div class="tool-badge">Signal Generator</div>
+        <div class="tool-badge">Altium (basics)</div>
+        <div class="tool-badge">Fusion 360</div>
+        <div class="tool-badge">MATLAB</div>
+        <div class="tool-badge">Wireshark</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════ TIMELINE ═══ -->
+  <section class="section section-dark" id="timeline">
+    <div class="container">
+      <div class="section-label"><span class="mono">// 04</span> Timeline</div>
+      <h2 class="section-title">My <span class="accent">Journey</span></h2>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <span class="tl-date">2024 – Present</span>
+            <h3 class="tl-title">MCA Semester 3 — LJ University</h3>
+            <p class="tl-desc">Pursuing Master of Computer Applications with focus on Data Science and system programming. Active in college tech events and volunteer activities.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <span class="tl-date">2023</span>
+            <h3 class="tl-title">First LoRa Network Deployment</h3>
+            <p class="tl-desc">Designed and deployed a 3-node LoRa sensor network for environmental monitoring across a 2km area. Learned RF fundamentals hands-on.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <span class="tl-date">2022</span>
+            <h3 class="tl-title">First PCB Design Taped Out</h3>
+            <p class="tl-desc">Designed, fabricated, and assembled a custom STM32-based dev board. First experience with Gerber files, PCB assembly, and bring-up debugging.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <span class="tl-date">2021</span>
+            <h3 class="tl-title">Started Embedded Journey</h3>
+            <p class="tl-desc">Picked up an Arduino Uno and never looked back. Within 6 months moved to STM32 bare-metal and haven't used HAL since.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ BLOG ═══ -->
+  <section class="section" id="blog">
+    <div class="container">
+      <div class="section-label"><span class="mono">// 05</span> Build in Public</div>
+      <h2 class="section-title">Latest <span class="accent">Writes</span></h2>
+      <p class="section-desc">Documenting what I learn — from register maps to radio protocols.</p>
+      <div class="blog-grid">
+        <article class="blog-card">
+          <div class="blog-tag">Firmware</div>
+          <h3 class="blog-title">Understanding ARM Cortex-M Context Switching</h3>
+          <p class="blog-excerpt">Diving into the PSP, MSP, and how RTOS schedulers pull off the magic of multi-tasking on a single core...</p>
+          <div class="blog-meta">
+            <span class="blog-date">Jun 2025</span>
+            <a href="#" class="blog-read">Read →</a>
+          </div>
+        </article>
+        <article class="blog-card">
+          <div class="blog-tag">PCB</div>
+          <h3 class="blog-title">Why Your PCB Trace Impedance Matters at 1MHz</h3>
+          <p class="blog-excerpt">A practical guide to controlled impedance traces, reference planes, and when parasitic capacitance bites you...</p>
+          <div class="blog-meta">
+            <span class="blog-date">May 2025</span>
+            <a href="#" class="blog-read">Read →</a>
+          </div>
+        </article>
+        <article class="blog-card">
+          <div class="blog-tag">IoT</div>
+          <h3 class="blog-title">MQTT vs LoRaWAN: Picking the Right Protocol</h3>
+          <p class="blog-excerpt">When to use which — tradeoffs in range, bandwidth, power, and infrastructure for real IoT deployments...</p>
+          <div class="blog-meta">
+            <span class="blog-date">Apr 2025</span>
+            <a href="#" class="blog-read">Read →</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════ CONTACT ═══ -->
+  <section class="section section-dark" id="contact">
+    <div class="container">
+      <div class="section-label"><span class="mono">// 06</span> Contact</div>
+      <h2 class="section-title">Let's <span class="accent">Connect</span></h2>
+      <p class="section-desc">Have a project, collab idea, or just want to geek out about embedded? Drop a message.</p>
+
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="contact-link-item">
+            <span class="cli-icon">📧</span>
+            <div>
+              <div class="cli-label">Email</div>
+              <a href="mailto:bhavik@example.com" class="cli-val">bhavik@example.com</a>
+            </div>
+          </div>
+          <div class="contact-link-item">
+            <span class="cli-icon">💼</span>
+            <div>
+              <div class="cli-label">LinkedIn</div>
+              <a href="#" class="cli-val">linkedin.com/in/bhavik</a>
+            </div>
+          </div>
+          <div class="contact-link-item">
+            <span class="cli-icon">🐙</span>
+            <div>
+              <div class="cli-label">GitHub</div>
+              <a href="#" class="cli-val">github.com/bhavik</a>
+            </div>
+          </div>
+          <div class="contact-link-item">
+            <span class="cli-icon">📍</span>
+            <div>
+              <div class="cli-label">Location</div>
+              <span class="cli-val">Ahmedabad, Gujarat, India</span>
+            </div>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contact-form">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-input" placeholder="Your name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" placeholder="your@email.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+            <input type="text" class="form-input" placeholder="Project / Collab / Just saying hi" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea class="form-input form-textarea" rows="5" placeholder="Tell me about your project or idea..."></textarea>
+          </div>
+          <button type="button" class="btn btn-primary form-submit" onclick="submitForm()">Send Message →</button>
+          <div class="form-status" id="form-status"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ FOOTER ═══ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="nav-logo">
+          <span class="logo-bracket">&lt;</span>
+          <span class="logo-name">BK</span>
+          <span class="logo-bracket">/&gt;</span>
+        </div>
+        <p class="footer-tagline mono">// built with ❤️ and too much solder</p>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 Bhavik K. — All rights reserved.</span>
+        <span class="mono accent">uptime: <span id="uptime">0s</span></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
