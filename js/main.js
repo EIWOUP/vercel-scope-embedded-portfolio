@@ -1,204 +1,389 @@
-/* ═══════════════════════════════════════════════════════
-   EMBEDDED PORTFOLIO — MAIN JS
-   ═══════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════
+   EMBEDDED PORTFOLIO — MAIN.JS
+   ══════════════════════════════════════════════════════════ */
 
-/* ── THEME TOGGLE ───────────────────────────────────────── */
-const html        = document.documentElement;
-const themeToggle = document.getElementById('themeToggle');
-const themeIcon   = themeToggle.querySelector('.theme-icon');
-
-// Default: dark
-let isDark = localStorage.getItem('theme') !== 'light';
-applyTheme();
-
-themeToggle.addEventListener('click', () => {
-  isDark = !isDark;
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  applyTheme();
-});
-
-function applyTheme() {
-  html.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  themeIcon.textContent = isDark ? '☀' : '🌙';
-}
-
-/* ── NAV SCROLL ─────────────────────────────────────────── */
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 40);
-}, { passive: true });
-
-/* ── HAMBURGER ──────────────────────────────────────────── */
-const hamburger  = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobileMenu');
-
-hamburger.addEventListener('click', () => {
-  mobileMenu.classList.toggle('open');
-});
-
-function closeMobile() {
-  mobileMenu.classList.remove('open');
-}
-
-/* ── OSCILLOSCOPE CANVAS ────────────────────────────────── */
+/* ─── OSCILLOSCOPE CANVAS ───────────────────────────────── */
 (function initOscilloscope() {
   const canvas = document.getElementById('oscilloscope');
-  if (!canvas) return;
+  const ctx    = canvas.getContext('2d');
 
-  const ctx = canvas.getContext('2d');
-  let W, H, raf;
-
-  const WAVES = [
-    { freq: 0.006, amp: 0.10, phase: 0,    speed: 0.012, color: '#00FF88' },
-    { freq: 0.009, amp: 0.05, phase: 2.1,  speed: 0.007, color: '#FFB800' },
-    { freq: 0.004, amp: 0.07, phase: 4.3,  speed: 0.004, color: '#00CCFF' },
-  ];
+  let W, H, t = 0;
 
   function resize() {
     W = canvas.width  = canvas.offsetWidth;
     H = canvas.height = canvas.offsetHeight;
   }
-
-  window.addEventListener('resize', resize, { passive: true });
   resize();
+  window.addEventListener('resize', resize);
 
-  let t = 0;
+  // Three wave configs — each mimics a different signal channel
+  const waves = [
+    {
+      // Channel 1 — smooth sine, primary (bright phosphor)
+      freq: 1.8, amp: 0.11, speed: 0.018,
+      yBase: 0.30,
+      color: 'rgba(0, 255, 136, 0.85)',
+      glow:  'rgba(0, 255, 136, 0.20)',
+      width: 2.2,
+      noise: 0.006,
+      type: 'sine'
+    },
+    {
+      // Channel 2 — noisy square-ish wave (digital signal look)
+      freq: 2.6, amp: 0.07, speed: 0.012,
+      yBase: 0.60,
+      color: 'rgba(0, 200, 255, 0.55)',
+      glow:  'rgba(0, 200, 255, 0.12)',
+      width: 1.6,
+      noise: 0.018,
+      type: 'square'
+    },
+    {
+      // Channel 3 — fast, tight sawtooth (clock signal)
+      freq: 5.2, amp: 0.045, speed: 0.028,
+      yBase: 0.78,
+      color: 'rgba(255, 140, 0, 0.40)',
+      glow:  'rgba(255, 140, 0, 0.08)',
+      width: 1.2,
+      noise: 0.012,
+      type: 'sawtooth'
+    }
+  ];
 
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-
-    WAVES.forEach(wave => {
-      ctx.beginPath();
-      ctx.strokeStyle = wave.color;
-      ctx.lineWidth = 1.5;
-      ctx.shadowColor = wave.color;
-      ctx.shadowBlur = 8;
-
-      for (let x = 0; x <= W; x += 2) {
-        const y = H / 2
-          + Math.sin(x * wave.freq + t * wave.speed + wave.phase) * (H * wave.amp)
-          + Math.sin(x * wave.freq * 0.5 + t * wave.speed * 0.6) * (H * wave.amp * 0.4);
-
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-    });
-
-    t++;
-    raf = requestAnimationFrame(draw);
+  function sampleWave(wave, x, t) {
+    const phase = (x / W) * Math.PI * 2 * wave.freq + t * wave.speed * 100;
+    let val = 0;
+    if (wave.type === 'sine') {
+      val = Math.sin(phase);
+    } else if (wave.type === 'square') {
+      val = Math.sign(Math.sin(phase)) * 0.85 + Math.sin(phase * 0.5) * 0.15;
+    } else if (wave.type === 'sawtooth') {
+      val = ((phase / (Math.PI)) % 2) - 1;
+      val = Math.max(-1, Math.min(1, val));
+    }
+    // add a little bit of gaussian noise
+    val += (Math.random() - 0.5) * wave.noise * 2;
+    return val;
   }
 
-  // Pause when tab not visible (performance)
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) cancelAnimationFrame(raf);
-    else draw();
-  });
+  function drawWave(wave) {
+    const points = [];
+    const step   = 3; // px per sample
 
-  draw();
+    for (let x = 0; x <= W; x += step) {
+      const y = H * wave.yBase + sampleWave(wave, x, t) * H * wave.amp;
+      points.push({ x, y });
+    }
+
+    // Draw glow layer (fat, transparent)
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      const mx = (points[i-1].x + points[i].x) / 2;
+      const my = (points[i-1].y + points[i].y) / 2;
+      ctx.quadraticCurveTo(points[i-1].x, points[i-1].y, mx, my);
+    }
+    ctx.strokeStyle = wave.glow;
+    ctx.lineWidth   = wave.width * 6;
+    ctx.lineCap     = 'round';
+    ctx.stroke();
+
+    // Draw sharp line on top
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      const mx = (points[i-1].x + points[i].x) / 2;
+      const my = (points[i-1].y + points[i].y) / 2;
+      ctx.quadraticCurveTo(points[i-1].x, points[i-1].y, mx, my);
+    }
+    ctx.strokeStyle = wave.color;
+    ctx.lineWidth   = wave.width;
+    ctx.stroke();
+  }
+
+  function drawGrid() {
+    ctx.strokeStyle = 'rgba(0,255,136,0.04)';
+    ctx.lineWidth   = 1;
+    const cols = 12, rows = 8;
+    for (let i = 0; i <= cols; i++) {
+      const x = (W / cols) * i;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let j = 0; j <= rows; j++) {
+      const y = (H / rows) * j;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    // center cross
+    ctx.strokeStyle = 'rgba(0,255,136,0.08)';
+    ctx.lineWidth   = 1.5;
+    ctx.beginPath(); ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    drawGrid();
+    waves.forEach(drawWave);
+    t++;
+    requestAnimationFrame(frame);
+  }
+  frame();
 })();
 
-/* ── INTERSECTION OBSERVER — FADE UP ────────────────────── */
-const observer = new IntersectionObserver(
-  (entries) => {
+
+/* ─── TERMINAL TYPEWRITER ────────────────────────────────── */
+(function initTerminal() {
+  const body = document.getElementById('terminal-body');
+  if (!body) return;
+
+  const lines = [
+    { type: 'cmd',  text: 'whoami' },
+    { type: 'out',  text: 'bhavik — embedded_dev' },
+    { type: 'cmd',  text: 'cat skills.h' },
+    { type: 'out',  text: '#define MCU   STM32 | ESP32 | RP2040' },
+    { type: 'out',  text: '#define PROTO  I2C | SPI | UART | CAN' },
+    { type: 'out',  text: '#define RTOS   FreeRTOS | bare-metal' },
+    { type: 'cmd',  text: 'ls projects/' },
+    { type: 'out',  text: 'env_monitor/  motor_driver/  lora_mesh/' },
+    { type: 'cmd',  text: 'echo $STATUS' },
+    { type: 'out',  text: 'open_to_work=true  📡' },
+  ];
+
+  let lineIdx = 0, charIdx = 0;
+  let currentEl = null;
+
+  function nextLine() {
+    if (lineIdx >= lines.length) return;
+    const line = lines[lineIdx];
+
+    const row    = document.createElement('div');
+    row.className = 'term-line';
+
+    if (line.type === 'cmd') {
+      const prompt = document.createElement('span');
+      prompt.className = 'term-prompt';
+      prompt.textContent = '$ ';
+      row.appendChild(prompt);
+      currentEl = document.createElement('span');
+      row.appendChild(currentEl);
+    } else {
+      currentEl = document.createElement('span');
+      currentEl.className = 'term-out';
+      row.appendChild(currentEl);
+    }
+
+    body.appendChild(row);
+    body.scrollTop = body.scrollHeight;
+    charIdx = 0;
+    typeChar(line.text);
+  }
+
+  function typeChar(text) {
+    if (charIdx < text.length) {
+      currentEl.textContent += text[charIdx++];
+      body.scrollTop = body.scrollHeight;
+      setTimeout(() => typeChar(text), lines[lineIdx].type === 'cmd' ? 55 : 18);
+    } else {
+      lineIdx++;
+      if (lineIdx < lines.length) {
+        setTimeout(nextLine, lines[lineIdx-1].type === 'cmd' ? 350 : 80);
+      } else {
+        // Add blinking cursor at end
+        const cur = document.createElement('span');
+        cur.className = 'term-cursor';
+        currentEl.parentElement.appendChild(cur);
+      }
+    }
+  }
+
+  setTimeout(nextLine, 800);
+})();
+
+
+/* ─── NAV SCROLL EFFECT ──────────────────────────────────── */
+(function initNav() {
+  const nav  = document.getElementById('nav');
+  const links = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('section[id]');
+
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+
+    // Active link tracking
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    links.forEach(l => {
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+    });
+  });
+
+  // Hamburger toggle
+  const ham = document.getElementById('hamburger');
+  const navLinks = document.querySelector('.nav-links');
+  if (ham) {
+    ham.addEventListener('click', () => {
+      navLinks && navLinks.classList.toggle('mobile-open');
+    });
+  }
+})();
+
+
+/* ─── PROJECT SLIDER ─────────────────────────────────────── */
+const sliderState = {};
+
+function slideProj(trackId, dotsId, dir) {
+  const track  = document.getElementById(trackId);
+  const dotsEl = document.getElementById(dotsId);
+  if (!track) return;
+
+  const slides = track.querySelectorAll('.slide');
+  const total  = slides.length;
+  if (!sliderState[trackId]) sliderState[trackId] = 0;
+
+  sliderState[trackId] = (sliderState[trackId] + dir + total) % total;
+  track.style.transform = `translateX(-${sliderState[trackId] * 100}%)`;
+
+  // Update dots
+  if (dotsEl) {
+    dotsEl.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === sliderState[trackId]);
+    });
+  }
+}
+
+// Dot click support
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.slide-dots').forEach(dotsEl => {
+    const dotsId  = dotsEl.id;
+    const trackId = dotsId.replace('dots-', 'track-');
+    dotsEl.querySelectorAll('.dot').forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        const track = document.getElementById(trackId);
+        if (!track) return;
+        sliderState[trackId] = i;
+        track.style.transform = `translateX(-${i * 100}%)`;
+        dotsEl.querySelectorAll('.dot').forEach((d, j) => d.classList.toggle('active', j === i));
+      });
+    });
+  });
+
+  // Touch swipe support
+  document.querySelectorAll('.proj-slider').forEach(slider => {
+    let startX = 0;
+    slider.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    slider.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) < 40) return;
+      const track = slider.querySelector('.slider-track');
+      const dots  = slider.querySelector('.slide-dots');
+      if (track && dots) slideProj(track.id, dots.id, dx < 0 ? 1 : -1);
+    });
+  });
+});
+
+
+/* ─── PROJECT FILTER ─────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards      = document.querySelectorAll('.proj-card');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+      cards.forEach(card => {
+        const cat = card.dataset.category || '';
+        if (filter === 'all' || cat.includes(filter)) {
+          card.classList.remove('hidden');
+          card.style.animation = 'none';
+          requestAnimationFrame(() => { card.style.animation = ''; });
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  });
+});
+
+
+/* ─── SKILL BAR ANIMATION ────────────────────────────────── */
+(function initSkillBars() {
+  const fills = document.querySelectorAll('.skill-fill');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('animated');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  fills.forEach(f => observer.observe(f));
+})();
+
+
+/* ─── FADE-IN ON SCROLL ──────────────────────────────────── */
+(function initFadeIn() {
+  const els = document.querySelectorAll(
+    '.proj-card, .skill-category, .blog-card, .tl-item, .about-card, .contact-link-item'
+  );
+  els.forEach(el => el.classList.add('fade-in'));
+
+  const observer = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
         e.target.classList.add('visible');
         observer.unobserve(e.target);
       }
     });
-  },
-  { threshold: 0.12 }
-);
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-// Mark elements and observe
-document.querySelectorAll(
-  '.section-title, .section-label, .section-sub, ' +
-  '.project-card, .skill-category, .cert-card, ' +
-  '.tl-item, .oss-card, .about-card, .contact-item'
-).forEach(el => {
-  el.classList.add('fade-up');
-  observer.observe(el);
-});
-
-/* ── SKILL BAR TRIGGER ──────────────────────────────────── */
-// Re-trigger CSS animation when skill bars scroll into view
-const skillObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.style.animation = 'none';
-        e.target.offsetHeight; // reflow
-        e.target.style.animation = '';
-        skillObserver.unobserve(e.target);
-      }
-    });
-  },
-  { threshold: 0.5 }
-);
-document.querySelectorAll('.skill-fill').forEach(el => skillObserver.observe(el));
-
-/* ── ACTIVE NAV LINK ────────────────────────────────────── */
-const sections  = document.querySelectorAll('section[id]');
-const navLinks  = document.querySelectorAll('.nav-links a');
-
-const sectionObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        navLinks.forEach(a => a.style.color = '');
-        const id = e.target.id;
-        const active = document.querySelector(`.nav-links a[href="#${id}"]`);
-        if (active) active.style.color = 'var(--accent)';
-      }
-    });
-  },
-  { rootMargin: '-40% 0px -55% 0px' }
-);
-sections.forEach(s => sectionObserver.observe(s));
-
-/* ── CONTACT FORM ───────────────────────────────────────── */
-function handleForm(e) {
-  e.preventDefault();
-  const msg = document.getElementById('formMsg');
-
-  // Simulate submit (replace with Formspree / EmailJS endpoint)
-  msg.textContent = 'Message sent! I\'ll get back to you soon.';
-  msg.className = 'form-msg success';
-  e.target.reset();
-
-  setTimeout(() => { msg.textContent = ''; msg.className = 'form-msg'; }, 5000);
-}
-
-/* ── FOOTER UPTIME CLOCK ────────────────────────────────── */
-(function clock() {
-  const el = document.getElementById('uptime');
-  if (!el) return;
-
-  function tick() {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    const s = String(now.getSeconds()).padStart(2, '0');
-    el.textContent = `SYSTEM TIME ${h}:${m}:${s}`;
-  }
-  tick();
-  setInterval(tick, 1000);
+  els.forEach(el => observer.observe(el));
 })();
 
-/* ── SMOOTH ANCHOR SCROLL ───────────────────────────────── */
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-  link.addEventListener('click', e => {
-    const id = link.getAttribute('href').slice(1);
-    const target = document.getElementById(id);
-    if (!target) return;
-    e.preventDefault();
 
-    const navH = parseInt(getComputedStyle(document.documentElement)
-      .getPropertyValue('--nav-h'), 10) || 64;
+/* ─── CONTACT FORM ───────────────────────────────────────── */
+function submitForm() {
+  const status = document.getElementById('form-status');
+  const inputs = document.querySelectorAll('#contact-form .form-input');
+  let allFilled = true;
+  inputs.forEach(i => { if (!i.value.trim()) allFilled = false; });
+  if (!allFilled) {
+    status.textContent = '⚠ Please fill out all fields.';
+    status.style.color = 'var(--amber)';
+    return;
+  }
+  status.textContent = '✓ Message sent! I\'ll get back to you soon.';
+  status.style.color = 'var(--green)';
+  inputs.forEach(i => { i.value = ''; });
+}
 
-    window.scrollTo({
-      top: target.offsetTop - navH,
-      behavior: 'smooth',
-    });
+
+/* ─── FOOTER UPTIME COUNTER ──────────────────────────────── */
+(function initUptime() {
+  const el = document.getElementById('uptime');
+  const start = Date.now();
+  setInterval(() => {
+    const s = Math.floor((Date.now() - start) / 1000);
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    el.textContent = h ? `${h}h ${m}m ${sec}s` : m ? `${m}m ${sec}s` : `${sec}s`;
+  }, 1000);
+})();
+
+
+/* ─── SMOOTH NAV CLICK ───────────────────────────────────── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      const top = target.getBoundingClientRect().top + window.scrollY - 68;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
   });
 });
