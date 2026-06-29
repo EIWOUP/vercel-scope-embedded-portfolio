@@ -1,389 +1,713 @@
-/* ══════════════════════════════════════════════════════════
-   EMBEDDED PORTFOLIO — MAIN.JS
-   ══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   BHAVIK K. — EMBEDDED PORTFOLIO — main.js
+   Particle field · Oscilloscope · About canvas · Projects mesh
+   Skills constellation · Terminal · Nav · Slider · Form
+   ═══════════════════════════════════════════════════════════════ */
 
-/* ─── OSCILLOSCOPE CANVAS ───────────────────────────────── */
+'use strict';
+
+/* ─── UTILITY ─────────────────────────────────────────────────── */
+const $ = (sel, ctx = document) => ctx.querySelector(sel);
+const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+const rand = (min, max) => Math.random() * (max - min) + min;
+const randInt = (min, max) => Math.floor(rand(min, max + 1));
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+
+/* ═══════════════════════════════════════════════════════════════
+   1.  GLOBAL BACKGROUND PARTICLE FIELD  (space / deep ocean)
+       Fixed canvas behind everything.
+       Many particles: varied size, opacity, speed, colour hue.
+       Some drift like plankton, some float like deep space debris.
+   ═══════════════════════════════════════════════════════════════ */
+(function initGlobalParticles() {
+  const canvas = document.getElementById('particle-field');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  const COUNT = 220;
+
+  const PALETTES = [
+    'rgba(0,210,150,',   // green
+    'rgba(0,198,255,',   // cyan
+    'rgba(0,150,220,',   // blue
+    'rgba(180,255,220,', // pale green
+    'rgba(100,200,255,', // sky
+    'rgba(255,255,255,', // white
+  ];
+
+  class Particle {
+    constructor() { this.reset(true); }
+
+    reset(initial = false) {
+      this.x = initial ? rand(0, W) : (Math.random() > 0.5 ? rand(-10, 0) : rand(W, W + 10));
+      this.y = rand(0, H);
+      this.r = rand(0.4, 3.2);
+      this.baseOpacity = rand(0.04, 0.38);
+      this.opacity = this.baseOpacity;
+      this.opacityDir = Math.random() > 0.5 ? 1 : -1;
+      this.opacitySpeed = rand(0.0005, 0.003);
+      this.vx = rand(-0.12, 0.12);
+      this.vy = rand(-0.08, 0.08);
+      this.colour = PALETTES[randInt(0, PALETTES.length - 1)];
+      // subtle wobble
+      this.wobbleAmp = rand(0, 0.4);
+      this.wobbleFreq = rand(0.005, 0.02);
+      this.wobblePhase = rand(0, Math.PI * 2);
+      this.age = 0;
+    }
+
+    update() {
+      this.age++;
+      this.x += this.vx;
+      this.y += this.vy + Math.sin(this.age * this.wobbleFreq + this.wobblePhase) * this.wobbleAmp * 0.015;
+
+      // breathe opacity
+      this.opacity += this.opacitySpeed * this.opacityDir;
+      if (this.opacity >= this.baseOpacity * 1.5 || this.opacity <= 0.01) {
+        this.opacityDir *= -1;
+        this.opacity = clamp(this.opacity, 0.01, this.baseOpacity * 1.5);
+      }
+
+      if (this.x < -20 || this.x > W + 20 || this.y < -20 || this.y > H + 20) {
+        this.reset();
+      }
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = this.colour + this.opacity.toFixed(3) + ')';
+      ctx.fill();
+    }
+  }
+
+  // Larger, slow-drifting "nebula" blobs
+  class NebulaBlob {
+    constructor() { this.reset(true); }
+    reset(initial = false) {
+      this.x = initial ? rand(0, W) : rand(0, W);
+      this.y = initial ? rand(0, H) : (Math.random() > 0.5 ? -80 : H + 80);
+      this.r = rand(60, 160);
+      this.opacity = rand(0.012, 0.045);
+      this.vx = rand(-0.04, 0.04);
+      this.vy = rand(-0.03, 0.03);
+      this.colour = PALETTES[randInt(0, 2)];
+    }
+    update() {
+      this.x += this.vx; this.y += this.vy;
+      if (this.x < -200 || this.x > W + 200 || this.y < -200 || this.y > H + 200) this.reset();
+    }
+    draw() {
+      const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r);
+      g.addColorStop(0, this.colour + this.opacity + ')');
+      g.addColorStop(1, this.colour + '0)');
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+    }
+  }
+
+  let blobs = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    if (particles.length === 0) {
+      for (let i = 0; i < COUNT; i++) particles.push(new Particle());
+      for (let i = 0; i < 8; i++) blobs.push(new NebulaBlob());
+    }
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    blobs.forEach(b => { b.update(); b.draw(); });
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  loop();
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   2.  OSCILLOSCOPE  (hero canvas — already solid, keep as-is)
+       Multi-channel: UART clock, SPI data, PWM waveform, noise.
+   ═══════════════════════════════════════════════════════════════ */
 (function initOscilloscope() {
   const canvas = document.getElementById('oscilloscope');
-  const ctx    = canvas.getContext('2d');
-
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
   let W, H, t = 0;
 
   function resize() {
-    W = canvas.width  = canvas.offsetWidth;
+    W = canvas.width = canvas.offsetWidth;
     H = canvas.height = canvas.offsetHeight;
   }
-  resize();
-  window.addEventListener('resize', resize);
 
-  // Three wave configs — each mimics a different signal channel
-  const waves = [
-    {
-      // Channel 1 — smooth sine, primary (bright phosphor)
-      freq: 1.8, amp: 0.11, speed: 0.018,
-      yBase: 0.30,
-      color: 'rgba(0, 255, 136, 0.85)',
-      glow:  'rgba(0, 255, 136, 0.20)',
-      width: 2.2,
-      noise: 0.006,
-      type: 'sine'
-    },
-    {
-      // Channel 2 — noisy square-ish wave (digital signal look)
-      freq: 2.6, amp: 0.07, speed: 0.012,
-      yBase: 0.60,
-      color: 'rgba(0, 200, 255, 0.55)',
-      glow:  'rgba(0, 200, 255, 0.12)',
-      width: 1.6,
-      noise: 0.018,
-      type: 'square'
-    },
-    {
-      // Channel 3 — fast, tight sawtooth (clock signal)
-      freq: 5.2, amp: 0.045, speed: 0.028,
-      yBase: 0.78,
-      color: 'rgba(255, 140, 0, 0.40)',
-      glow:  'rgba(255, 140, 0, 0.08)',
-      width: 1.2,
-      noise: 0.012,
-      type: 'sawtooth'
-    }
-  ];
+  /* waveform helpers */
+  const sq = (x, freq) => Math.sign(Math.sin(x * freq));
+  const pw = (x, freq, duty) => (((x * freq) % (Math.PI * 2)) < (Math.PI * 2 * duty)) ? 1 : -1;
+  const sawtooth = (x, freq) => 2 * ((x * freq / (Math.PI * 2)) % 1) - 1;
 
-  function sampleWave(wave, x, t) {
-    const phase = (x / W) * Math.PI * 2 * wave.freq + t * wave.speed * 100;
-    let val = 0;
-    if (wave.type === 'sine') {
-      val = Math.sin(phase);
-    } else if (wave.type === 'square') {
-      val = Math.sign(Math.sin(phase)) * 0.85 + Math.sin(phase * 0.5) * 0.15;
-    } else if (wave.type === 'sawtooth') {
-      val = ((phase / (Math.PI)) % 2) - 1;
-      val = Math.max(-1, Math.min(1, val));
-    }
-    // add a little bit of gaussian noise
-    val += (Math.random() - 0.5) * wave.noise * 2;
-    return val;
+  // Channel configs: { y-centre (0‒1), amplitude (px), colour, line, waveformFn }
+  function channels(W, H) {
+    return [
+      /* CLK — square wave */
+      {
+        cy: .15, amp: H * .06, col: '#00d296', lw: 1.3,
+        fn: (x, t) => sq(x / W * 40 + t * 0.8, 1)
+      },
+      /* SPI DATA — noisy square bursts */
+      {
+        cy: .32, amp: H * .055, col: '#00c6ff', lw: 1.2,
+        fn: (x, t) => {
+          const base = sq(x / W * 28 + t * 0.55, 1);
+          return base + (Math.random() - 0.5) * 0.18;
+        }
+      },
+      /* PWM — variable duty */
+      {
+        cy: .50, amp: H * .06, col: '#f59e0b', lw: 1.2,
+        fn: (x, t) => pw(x / W * 24 + t * 0.45, 1, 0.3 + 0.25 * Math.sin(t * 0.2))
+      },
+      /* UART — complex signal */
+      {
+        cy: .68, amp: H * .05, col: '#a78bfa', lw: 1.0,
+        fn: (x, t) => {
+          const beat = Math.floor((x / W * 18 + t * 0.5) % 10);
+          return [1,-1,1,1,-1,-1,1,-1,1,-1][beat] * (0.8 + Math.random() * 0.2);
+        }
+      },
+      /* Analog noise — ECG style */
+      {
+        cy: .84, amp: H * .045, col: 'rgba(0,210,150,.5)', lw: 0.8,
+        fn: (x, t) => Math.sin(x / W * 60 + t * 1.1) * 0.5 + Math.sin(x / W * 20 + t) * 0.4 +
+                      (Math.random() - 0.5) * 0.12
+      },
+    ];
   }
 
-  function drawWave(wave) {
-    const points = [];
-    const step   = 3; // px per sample
-
-    for (let x = 0; x <= W; x += step) {
-      const y = H * wave.yBase + sampleWave(wave, x, t) * H * wave.amp;
-      points.push({ x, y });
-    }
-
-    // Draw glow layer (fat, transparent)
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length; i++) {
-      const mx = (points[i-1].x + points[i].x) / 2;
-      const my = (points[i-1].y + points[i].y) / 2;
-      ctx.quadraticCurveTo(points[i-1].x, points[i-1].y, mx, my);
-    }
-    ctx.strokeStyle = wave.glow;
-    ctx.lineWidth   = wave.width * 6;
-    ctx.lineCap     = 'round';
-    ctx.stroke();
-
-    // Draw sharp line on top
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length; i++) {
-      const mx = (points[i-1].x + points[i].x) / 2;
-      const my = (points[i-1].y + points[i].y) / 2;
-      ctx.quadraticCurveTo(points[i-1].x, points[i-1].y, mx, my);
-    }
-    ctx.strokeStyle = wave.color;
-    ctx.lineWidth   = wave.width;
-    ctx.stroke();
-  }
-
+  // Grid lines
   function drawGrid() {
-    ctx.strokeStyle = 'rgba(0,255,136,0.04)';
-    ctx.lineWidth   = 1;
-    const cols = 12, rows = 8;
+    ctx.strokeStyle = 'rgba(0,210,150,.07)';
+    ctx.lineWidth = .5;
+    const cols = 20, rows = 12;
     for (let i = 0; i <= cols; i++) {
       const x = (W / cols) * i;
       ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
     }
-    for (let j = 0; j <= rows; j++) {
-      const y = (H / rows) * j;
+    for (let i = 0; i <= rows; i++) {
+      const y = (H / rows) * i;
       ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
     }
-    // center cross
-    ctx.strokeStyle = 'rgba(0,255,136,0.08)';
-    ctx.lineWidth   = 1.5;
-    ctx.beginPath(); ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
+    // centre cross hairs
+    ctx.strokeStyle = 'rgba(0,210,150,.14)';
+    ctx.lineWidth = .7;
+    ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke();
   }
 
-  function frame() {
+  function drawChannel(ch) {
+    const cy = ch.cy * H;
+    ctx.beginPath();
+    ctx.strokeStyle = ch.col;
+    ctx.lineWidth = ch.lw;
+    ctx.shadowBlur = 6;
+    ctx.shadowColor = ch.col;
+    for (let x = 0; x < W; x++) {
+      const y = cy - ch.fn(x, t) * ch.amp;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  // Channel labels
+  function drawLabels() {
+    ctx.font = '11px JetBrains Mono, monospace';
+    const labels = ['CLK', 'MOSI', 'PWM', 'UART', 'ADC'];
+    channels(W, H).forEach((ch, i) => {
+      ctx.fillStyle = ch.col;
+      ctx.fillText(labels[i], 8, ch.cy * H - ch.amp - 4);
+    });
+  }
+
+  function loop() {
     ctx.clearRect(0, 0, W, H);
     drawGrid();
-    waves.forEach(drawWave);
-    t++;
-    requestAnimationFrame(frame);
+    channels(W, H).forEach(ch => drawChannel(ch));
+    drawLabels();
+    t += 0.016;
+    requestAnimationFrame(loop);
   }
-  frame();
+
+  window.addEventListener('resize', resize);
+  resize();
+  loop();
 })();
 
+/* ═══════════════════════════════════════════════════════════════
+   3.  ABOUT SECTION — floating micro particles
+       Small canvas inside the about section.
+       Particles drift like bio-luminescent plankton.
+   ═══════════════════════════════════════════════════════════════ */
+(function initAboutParticles() {
+  const section = document.getElementById('about');
+  if (!section) return;
 
-/* ─── TERMINAL TYPEWRITER ────────────────────────────────── */
+  // Create canvas inside the section
+  const canvas = document.createElement('canvas');
+  canvas.id = 'about-particles';
+  canvas.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:0;';
+  section.prepend(canvas);
+
+  const ctx = canvas.getContext('2d');
+  let W, H, pts = [];
+  const COUNT = 80;
+
+  class FloatParticle {
+    constructor() { this.init(); }
+    init() {
+      this.x = rand(0, W || 100);
+      this.y = rand(0, H || 100);
+      this.r = rand(0.6, 2.5);
+      this.op = rand(0.05, 0.3);
+      this.vx = rand(-0.08, 0.08);
+      this.vy = rand(-0.06, 0.04);
+      this.phase = rand(0, Math.PI * 2);
+      this.freq  = rand(0.008, 0.025);
+      this.t = 0;
+      this.col = Math.random() > 0.6
+        ? `rgba(0,210,150,`
+        : `rgba(0,180,255,`;
+    }
+    update() {
+      this.t++;
+      this.x += this.vx + Math.sin(this.t * this.freq + this.phase) * 0.12;
+      this.y += this.vy + Math.cos(this.t * this.freq + this.phase) * 0.08;
+      if (this.x < -10 || this.x > W + 10 || this.y < -10 || this.y > H + 10) this.init();
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = this.col + this.op + ')';
+      ctx.fill();
+    }
+  }
+
+  function resize() {
+    const rect = section.getBoundingClientRect();
+    W = canvas.width  = section.offsetWidth;
+    H = canvas.height = section.offsetHeight;
+    if (pts.length === 0) for (let i = 0; i < COUNT; i++) pts.push(new FloatParticle());
+  }
+
+  let animId;
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    pts.forEach(p => { p.update(); p.draw(); });
+    animId = requestAnimationFrame(loop);
+  }
+
+  const ro = new ResizeObserver(resize);
+  ro.observe(section);
+  resize();
+  loop();
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   4.  PROJECTS SECTION — circuit-board mesh background
+       Nodes connected by thin traces, occasional signal pulse
+   ═══════════════════════════════════════════════════════════════ */
+(function initProjectsBg() {
+  const section = document.getElementById('projects');
+  if (!section) return;
+
+  const canvas = document.createElement('canvas');
+  canvas.id = 'projects-bg-canvas';
+  canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;';
+  section.prepend(canvas);
+
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes = [], edges = [], pulses = [];
+  const NODE_COUNT = 55;
+  const MAX_DIST = 160;
+
+  function buildGraph() {
+    nodes = [];
+    edges = [];
+    pulses = [];
+    for (let i = 0; i < NODE_COUNT; i++) {
+      nodes.push({
+        x: rand(20, W - 20),
+        y: rand(20, H - 20),
+        r: rand(1.5, 4),
+        glow: Math.random() > 0.7,
+      });
+    }
+    // connect nearby nodes (circuit traces)
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < MAX_DIST) {
+          edges.push({ a: i, b: j, d });
+        }
+      }
+    }
+  }
+
+  // Signal pulse travelling along a random edge
+  function spawnPulse() {
+    if (edges.length === 0) return;
+    const edge = edges[randInt(0, edges.length - 1)];
+    pulses.push({ edge, t: 0, speed: rand(0.005, 0.015) });
+  }
+
+  setInterval(spawnPulse, 400);
+
+  function resize() {
+    W = canvas.width  = section.offsetWidth;
+    H = canvas.height = section.offsetHeight;
+    buildGraph();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Traces
+    edges.forEach(e => {
+      const a = nodes[e.a], b = nodes[e.b];
+      const alpha = lerp(0.04, 0.12, 1 - e.d / MAX_DIST);
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+      ctx.strokeStyle = `rgba(0,210,150,${alpha})`;
+      ctx.lineWidth = .5;
+      ctx.stroke();
+    });
+
+    // Pulses
+    pulses = pulses.filter(p => {
+      p.t += p.speed;
+      if (p.t > 1) return false;
+      const a = nodes[p.edge.a], b = nodes[p.edge.b];
+      const px = lerp(a.x, b.x, p.t);
+      const py = lerp(a.y, b.y, p.t);
+      ctx.beginPath();
+      ctx.arc(px, py, 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,210,150,.85)';
+      ctx.shadowBlur = 10; ctx.shadowColor = '#00d296';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      return true;
+    });
+
+    // Nodes
+    nodes.forEach(n => {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      if (n.glow) {
+        ctx.shadowBlur = 8; ctx.shadowColor = '#00d296';
+        ctx.fillStyle = 'rgba(0,210,150,.65)';
+      } else {
+        ctx.fillStyle = 'rgba(0,210,150,.3)';
+      }
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  const ro = new ResizeObserver(resize);
+  ro.observe(section);
+  resize();
+  draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   5.  SKILLS SECTION — constellation nebula background
+       Stars + constellation lines
+   ═══════════════════════════════════════════════════════════════ */
+(function initSkillsBg() {
+  const section = document.getElementById('skills');
+  if (!section) return;
+
+  const canvas = document.createElement('canvas');
+  canvas.id = 'skills-bg-canvas';
+  canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;';
+  section.prepend(canvas);
+
+  const ctx = canvas.getContext('2d');
+  let W, H, stars = [], conLines = [];
+  const STAR_COUNT = 90;
+  let t = 0;
+
+  class Star {
+    constructor() { this.init(); }
+    init() {
+      this.x = rand(0, W || 800);
+      this.y = rand(0, H || 600);
+      this.r = rand(.3, 1.8);
+      this.baseOp = rand(0.04, 0.22);
+      this.op = this.baseOp;
+      this.phase = rand(0, Math.PI * 2);
+      this.freq = rand(0.01, 0.04);
+    }
+    update(t) {
+      this.op = this.baseOp + Math.sin(t * this.freq + this.phase) * this.baseOp * 0.5;
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(180,240,255,${this.op})`;
+      ctx.fill();
+    }
+  }
+
+  function buildConstellations() {
+    conLines = [];
+    // Random constellation lines between nearby stars
+    for (let i = 0; i < stars.length; i++) {
+      for (let j = i + 1; j < stars.length; j++) {
+        const dx = stars[i].x - stars[j].x;
+        const dy = stars[i].y - stars[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 120 && Math.random() < 0.35) {
+          conLines.push({ i, j, d });
+        }
+      }
+    }
+  }
+
+  function resize() {
+    W = canvas.width  = section.offsetWidth;
+    H = canvas.height = section.offsetHeight;
+    stars = [];
+    for (let i = 0; i < STAR_COUNT; i++) stars.push(new Star());
+    buildConstellations();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.5;
+
+    // Constellation lines
+    conLines.forEach(cl => {
+      const a = stars[cl.i], b = stars[cl.j];
+      const alpha = lerp(0.015, 0.06, 1 - cl.d / 120);
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+      ctx.strokeStyle = `rgba(0,210,150,${alpha})`;
+      ctx.lineWidth = .4;
+      ctx.stroke();
+    });
+
+    // Stars
+    stars.forEach(s => { s.update(t); s.draw(); });
+
+    requestAnimationFrame(draw);
+  }
+
+  const ro = new ResizeObserver(resize);
+  ro.observe(section);
+  resize();
+  draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   6.  TERMINAL — animated typing in the hero
+   ═══════════════════════════════════════════════════════════════ */
 (function initTerminal() {
   const body = document.getElementById('terminal-body');
   if (!body) return;
 
   const lines = [
-    { type: 'cmd',  text: 'whoami' },
-    { type: 'out',  text: 'bhavik — embedded_dev' },
-    { type: 'cmd',  text: 'cat skills.h' },
-    { type: 'out',  text: '#define MCU   STM32 | ESP32 | RP2040' },
-    { type: 'out',  text: '#define PROTO  I2C | SPI | UART | CAN' },
-    { type: 'out',  text: '#define RTOS   FreeRTOS | bare-metal' },
-    { type: 'cmd',  text: 'ls projects/' },
-    { type: 'out',  text: 'env_monitor/  motor_driver/  lora_mesh/' },
-    { type: 'cmd',  text: 'echo $STATUS' },
-    { type: 'out',  text: 'open_to_work=true  📡' },
+    { text: '$ system_init --target=embedded', cls: 'mono' },
+    { text: '  [OK] FreeRTOS kernel v10.5.1 loaded', cls: 't-line-green' },
+    { text: '  [OK] Flash: 512KB  |  SRAM: 128KB', cls: 't-line-green' },
+    { text: '  [OK] GPIO, UART, SPI, I2C initialised', cls: 't-line-green' },
+    { text: '$ load_portfolio --engineer=bhavik', cls: 'mono' },
+    { text: '  >> projects[]   : 8 loaded', cls: 't-line-dim' },
+    { text: '  >> skills[]     : 24 tagged', cls: 't-line-dim' },
+    { text: '  >> uptime       : live', cls: 't-line-amber' },
+    { text: '  >> status       : open_to_work = true', cls: 't-line-green' },
+    { text: '$ _', cls: 'mono' },
   ];
 
-  let lineIdx = 0, charIdx = 0;
-  let currentEl = null;
+  let li = 0, ci = 0;
+  const CHAR_DELAY = 28, LINE_DELAY = 180;
 
-  function nextLine() {
-    if (lineIdx >= lines.length) return;
-    const line = lines[lineIdx];
-
-    const row    = document.createElement('div');
-    row.className = 'term-line';
-
-    if (line.type === 'cmd') {
-      const prompt = document.createElement('span');
-      prompt.className = 'term-prompt';
-      prompt.textContent = '$ ';
-      row.appendChild(prompt);
-      currentEl = document.createElement('span');
-      row.appendChild(currentEl);
-    } else {
-      currentEl = document.createElement('span');
-      currentEl.className = 'term-out';
-      row.appendChild(currentEl);
+  function nextChar() {
+    if (li >= lines.length) return;
+    const line = lines[li];
+    if (ci === 0) {
+      const el = document.createElement('div');
+      el.className = line.cls || '';
+      el.dataset.idx = li;
+      body.appendChild(el);
     }
-
-    body.appendChild(row);
-    body.scrollTop = body.scrollHeight;
-    charIdx = 0;
-    typeChar(line.text);
-  }
-
-  function typeChar(text) {
-    if (charIdx < text.length) {
-      currentEl.textContent += text[charIdx++];
-      body.scrollTop = body.scrollHeight;
-      setTimeout(() => typeChar(text), lines[lineIdx].type === 'cmd' ? 55 : 18);
+    const el = body.querySelector(`[data-idx="${li}"]`);
+    if (ci < line.text.length) {
+      el.textContent = line.text.slice(0, ci + 1);
+      ci++;
+      setTimeout(nextChar, line.text[ci - 1] === ' ' ? CHAR_DELAY * 0.5 : CHAR_DELAY);
     } else {
-      lineIdx++;
-      if (lineIdx < lines.length) {
-        setTimeout(nextLine, lines[lineIdx-1].type === 'cmd' ? 350 : 80);
-      } else {
-        // Add blinking cursor at end
-        const cur = document.createElement('span');
-        cur.className = 'term-cursor';
-        currentEl.parentElement.appendChild(cur);
-      }
+      li++; ci = 0;
+      setTimeout(nextChar, LINE_DELAY);
     }
   }
 
-  setTimeout(nextLine, 800);
+  setTimeout(nextChar, 600);
 })();
 
-
-/* ─── NAV SCROLL EFFECT ──────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   7.  NAV — active highlight, scroll shadow, hamburger
+   ═══════════════════════════════════════════════════════════════ */
 (function initNav() {
-  const nav  = document.getElementById('nav');
-  const links = document.querySelectorAll('.nav-link');
-  const sections = document.querySelectorAll('section[id]');
+  const nav = document.getElementById('nav');
+  const links = $$('.nav-link');
+  const hamburger = document.getElementById('hamburger');
+  const sections = $$('section[id]');
 
+  // Scroll → shadow
   window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 40);
+    nav.style.background = window.scrollY > 50
+      ? 'rgba(5,10,14,.96)'
+      : 'rgba(5,10,14,.82)';
+  }, { passive: true });
 
-    // Active link tracking
-    let current = '';
-    sections.forEach(s => {
-      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+  // Intersection → active link
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = links.find(l => l.getAttribute('href') === '#' + e.target.id);
+        if (active) active.classList.add('active');
+      }
     });
-    links.forEach(l => {
-      l.classList.toggle('active', l.getAttribute('href') === '#' + current);
-    });
-  });
+  }, { threshold: 0.35 });
+  sections.forEach(s => io.observe(s));
 
-  // Hamburger toggle
-  const ham = document.getElementById('hamburger');
-  const navLinks = document.querySelector('.nav-links');
-  if (ham) {
-    ham.addEventListener('click', () => {
-      navLinks && navLinks.classList.toggle('mobile-open');
+  // Hamburger (mobile)
+  if (hamburger) {
+    hamburger.addEventListener('click', () => {
+      const ul = $('.nav-links');
+      if (ul) {
+        const visible = ul.style.display === 'flex';
+        ul.style.display = visible ? 'none' : 'flex';
+        ul.style.flexDirection = 'column';
+        ul.style.position = 'absolute';
+        ul.style.top = '100%';
+        ul.style.left = '0'; ul.style.right = '0';
+        ul.style.background = 'rgba(5,10,14,.97)';
+        ul.style.padding = '1rem 2rem';
+      }
     });
   }
 })();
 
-
-/* ─── PROJECT SLIDER ─────────────────────────────────────── */
-const sliderState = {};
-
+/* ═══════════════════════════════════════════════════════════════
+   8.  PROJECT SLIDER
+   ═══════════════════════════════════════════════════════════════ */
 function slideProj(trackId, dotsId, dir) {
-  const track  = document.getElementById(trackId);
-  const dotsEl = document.getElementById(dotsId);
+  const track = document.getElementById(trackId);
+  const dots  = document.getElementById(dotsId);
   if (!track) return;
 
   const slides = track.querySelectorAll('.slide');
   const total  = slides.length;
-  if (!sliderState[trackId]) sliderState[trackId] = 0;
+  let cur = track._cur || 0;
+  cur = (cur + dir + total) % total;
+  track._cur = cur;
 
-  sliderState[trackId] = (sliderState[trackId] + dir + total) % total;
-  track.style.transform = `translateX(-${sliderState[trackId] * 100}%)`;
+  track.style.transform = `translateX(-${cur * 100}%)`;
 
-  // Update dots
-  if (dotsEl) {
-    dotsEl.querySelectorAll('.dot').forEach((d, i) => {
-      d.classList.toggle('active', i === sliderState[trackId]);
+  if (dots) {
+    dots.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === cur);
     });
   }
 }
 
-// Dot click support
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.slide-dots').forEach(dotsEl => {
-    const dotsId  = dotsEl.id;
-    const trackId = dotsId.replace('dots-', 'track-');
-    dotsEl.querySelectorAll('.dot').forEach((dot, i) => {
-      dot.addEventListener('click', () => {
-        const track = document.getElementById(trackId);
-        if (!track) return;
-        sliderState[trackId] = i;
-        track.style.transform = `translateX(-${i * 100}%)`;
-        dotsEl.querySelectorAll('.dot').forEach((d, j) => d.classList.toggle('active', j === i));
-      });
-    });
+/* auto-advance sliders */
+(function autoSlide() {
+  const sliders = [
+    { track: 'track-1', dots: 'dots-1' },
+    { track: 'track-2', dots: 'dots-2' },
+    { track: 'track-3', dots: 'dots-3' },
+    { track: 'track-4', dots: 'dots-4' },
+  ];
+  sliders.forEach((s, i) => {
+    setInterval(() => slideProj(s.track, s.dots, 1), 4200 + i * 700);
   });
+})();
 
-  // Touch swipe support
-  document.querySelectorAll('.proj-slider').forEach(slider => {
-    let startX = 0;
-    slider.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
-    slider.addEventListener('touchend', e => {
-      const dx = e.changedTouches[0].clientX - startX;
-      if (Math.abs(dx) < 40) return;
-      const track = slider.querySelector('.slider-track');
-      const dots  = slider.querySelector('.slide-dots');
-      if (track && dots) slideProj(track.id, dots.id, dx < 0 ? 1 : -1);
-    });
-  });
-});
-
-
-/* ─── PROJECT FILTER ─────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const cards      = document.querySelectorAll('.proj-card');
-
-  filterBtns.forEach(btn => {
+/* ═══════════════════════════════════════════════════════════════
+   9.  PROJECT FILTER
+   ═══════════════════════════════════════════════════════════════ */
+(function initFilter() {
+  const btns  = $$('.filter-btn');
+  const cards = $$('.proj-card');
+  btns.forEach(btn => {
     btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
+      btns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-
-      const filter = btn.dataset.filter;
-      cards.forEach(card => {
-        const cat = card.dataset.category || '';
-        if (filter === 'all' || cat.includes(filter)) {
-          card.classList.remove('hidden');
-          card.style.animation = 'none';
-          requestAnimationFrame(() => { card.style.animation = ''; });
-        } else {
-          card.classList.add('hidden');
-        }
+      const f = btn.dataset.filter;
+      cards.forEach(c => {
+        const show = f === 'all' || (c.dataset.category || '').includes(f);
+        c.style.display = show ? '' : 'none';
       });
     });
   });
-});
-
-
-/* ─── SKILL BAR ANIMATION ────────────────────────────────── */
-(function initSkillBars() {
-  const fills = document.querySelectorAll('.skill-fill');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('animated');
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.3 });
-  fills.forEach(f => observer.observe(f));
 })();
 
-
-/* ─── FADE-IN ON SCROLL ──────────────────────────────────── */
-(function initFadeIn() {
-  const els = document.querySelectorAll(
-    '.proj-card, .skill-category, .blog-card, .tl-item, .about-card, .contact-link-item'
-  );
-  els.forEach(el => el.classList.add('fade-in'));
-
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-  els.forEach(el => observer.observe(el));
-})();
-
-
-/* ─── CONTACT FORM ───────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   10. CONTACT FORM
+   ═══════════════════════════════════════════════════════════════ */
 function submitForm() {
   const status = document.getElementById('form-status');
-  const inputs = document.querySelectorAll('#contact-form .form-input');
-  let allFilled = true;
-  inputs.forEach(i => { if (!i.value.trim()) allFilled = false; });
-  if (!allFilled) {
-    status.textContent = '⚠ Please fill out all fields.';
-    status.style.color = 'var(--amber)';
-    return;
-  }
-  status.textContent = '✓ Message sent! I\'ll get back to you soon.';
-  status.style.color = 'var(--green)';
-  inputs.forEach(i => { i.value = ''; });
+  if (!status) return;
+  status.textContent = '>> Sending packet...';
+  setTimeout(() => {
+    status.textContent = '[OK] Message delivered. ACK received.';
+  }, 1200);
 }
 
-
-/* ─── FOOTER UPTIME COUNTER ──────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   11. UPTIME COUNTER
+   ═══════════════════════════════════════════════════════════════ */
 (function initUptime() {
   const el = document.getElementById('uptime');
+  if (!el) return;
   const start = Date.now();
   setInterval(() => {
     const s = Math.floor((Date.now() - start) / 1000);
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sec = s % 60;
-    el.textContent = h ? `${h}h ${m}m ${sec}s` : m ? `${m}m ${sec}s` : `${sec}s`;
+    const m = Math.floor(s / 60);
+    const h = Math.floor(m / 60);
+    if (h > 0)       el.textContent = `${h}h ${m % 60}m ${s % 60}s`;
+    else if (m > 0)  el.textContent = `${m}m ${s % 60}s`;
+    else             el.textContent = `${s}s`;
   }, 1000);
 })();
 
-
-/* ─── SMOOTH NAV CLICK ───────────────────────────────────── */
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) {
-      e.preventDefault();
-      const top = target.getBoundingClientRect().top + window.scrollY - 68;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
-  });
-});
+/* ═══════════════════════════════════════════════════════════════
+   12. SCROLL REVEAL
+   ═══════════════════════════════════════════════════════════════ */
+(function initReveal() {
+  const els = $$('.section-title, .about-grid, .proj-card, .skill-cluster, .tl-item, .blog-card, .contact-grid');
+  els.forEach(el => el.classList.add('reveal'));
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  els.forEach(el => io.observe(el));
+})();
