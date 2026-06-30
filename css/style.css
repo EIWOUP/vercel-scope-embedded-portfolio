@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   BHAVIK K. — EMBEDDED SYSTEMS PORTFOLIO
+   GAURAV AHIR — EMBEDDED SYSTEMS PORTFOLIO
    Full redesign: particle field, animated About, orbital Skills,
    Projects mesh bg, kept Hero & Timeline & Journey as-is
    ═══════════════════════════════════════════════════════════════ */
@@ -89,6 +89,14 @@ nav, section, footer { position: relative; z-index: 1; }
 }
 .nav-link:hover, .nav-link.active { color: var(--green); }
 .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+.nav-link-sub {
+  opacity: .65;
+  font-size: .72rem;
+}
+.nav-link-sub::before {
+  content: '↳ ';
+  opacity: .7;
+}
 .nav-cta {
   font-family: var(--mono); font-size: .75rem;
   padding: .45rem 1.1rem;
@@ -115,7 +123,7 @@ nav, section, footer { position: relative; z-index: 1; }
 }
 .osc-canvas {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  opacity: .22; pointer-events: none;
+  opacity: .253; pointer-events: none; /* +15% bloom */
 }
 .hero-scanlines {
   position: absolute; inset: 0; pointer-events: none;
@@ -357,6 +365,7 @@ nav, section, footer { position: relative; z-index: 1; }
   background: rgba(0,210,150,.06);
   transition: all .2s;
   animation: chip-float 4s ease-in-out infinite;
+  will-change: transform; /* keeps this always-on float on its own GPU layer */
 }
 .chip:nth-child(2n)   { animation-delay: .6s; }
 .chip:nth-child(3n)   { animation-delay: 1.2s; }
@@ -373,16 +382,28 @@ nav, section, footer { position: relative; z-index: 1; }
   50%     { transform: translateY(-4px); }
 }
 
-/* About code card */
+/* About code card
+   PERF: this card floats continuously (card-float) directly above two
+   live-redrawing canvases (global particles + about-particles). A
+   moving backdrop-filter on top of constantly-repainting content is
+   one of the most expensive combinations in CSS — the browser must
+   recompute the blur against fresh pixels every frame. Two cheap
+   mitigations, same frosted-glass look: isolate the card onto its
+   own compositor layer (translateZ(0) + isolation) so the blur source
+   is more stable, and trim the radius from 8px to 6px — blur cost
+   scales roughly with radius², so this alone is a real saving while
+   staying visually indistinguishable at this size. */
 .about-card {
   background: rgba(8,20,28,.85);
   border: 1px solid var(--border2);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
   animation: card-float 6s ease-in-out infinite;
   position: relative;
+  will-change: transform; /* always-on float — own GPU layer, no repeat promote/demote */
+  isolation: isolate;
 }
 .about-card::before {
   content: '';
@@ -394,9 +415,9 @@ nav, section, footer { position: relative; z-index: 1; }
   pointer-events: none;
 }
 @keyframes card-float {
-  0%,100% { transform: translateY(0) rotate(0deg); }
-  33%     { transform: translateY(-8px) rotate(.3deg); }
-  66%     { transform: translateY(-4px) rotate(-.2deg); }
+  0%,100% { transform: translateY(0) rotate(0deg) translateZ(0); }
+  33%     { transform: translateY(-8px) rotate(.3deg) translateZ(0); }
+  66%     { transform: translateY(-4px) rotate(-.2deg) translateZ(0); }
 }
 .acard-header {
   padding: .7rem 1.2rem;
@@ -425,7 +446,7 @@ nav, section, footer { position: relative; z-index: 1; }
 #projects-bg-canvas {
   position: absolute; inset: 0;
   pointer-events: none; z-index: 0;
-  opacity: .35;
+  opacity: .6;
 }
 #projects .container { position: relative; z-index: 1; }
 
@@ -456,7 +477,7 @@ nav, section, footer { position: relative; z-index: 1; }
 .proj-card {
   background: rgba(8,20,28,.9);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg); overflow: hidden;
+  border-radius: 28px; overflow: hidden; /* curvier than the site-wide --radius-lg */
   transition: border-color .3s, transform .3s, box-shadow .3s;
   position: relative;
 }
@@ -561,6 +582,52 @@ nav, section, footer { position: relative; z-index: 1; }
   content: '›'; position: absolute; left: 0;
   color: var(--green);
 }
+/* Collapsible code snippet panel */
+.proj-code { margin-bottom: 1rem; }
+.code-toggle {
+  display: flex; align-items: center; gap: .5rem;
+  width: 100%; font-family: var(--mono); font-size: .72rem;
+  color: var(--cyan); background: transparent;
+  border: 1px solid var(--border2); border-radius: 6px;
+  padding: .45rem .8rem; cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.code-toggle:hover { border-color: var(--cyan); background: rgba(0,198,255,.08); }
+.code-toggle .ct-icon {
+  display: inline-block; transition: transform .25s;
+  color: var(--text-dim);
+}
+.code-toggle.open .ct-icon { transform: rotate(90deg); color: var(--cyan); }
+.code-toggle .ct-label { flex: 1; text-align: left; }
+.code-toggle .ct-hint { color: var(--text-dim); font-size: .68rem; }
+
+.code-panel {
+  max-height: 0; overflow: hidden;
+  transition: max-height .35s ease, margin-top .35s ease;
+}
+.code-panel.open { max-height: 640px; margin-top: .6rem; }
+
+.code-block {
+  background: rgba(0,0,0,.45);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+}
+.code-block .placeholder-tag {
+  display: inline-block;
+  font-family: var(--mono); font-size: .65rem;
+  color: var(--amber); background: rgba(245,158,11,.12);
+  border: 1px solid rgba(245,158,11,.3);
+  padding: .2rem .55rem; border-radius: 4px;
+  margin-bottom: .7rem;
+}
+.code-block pre {
+  font-family: var(--mono); font-size: .76rem;
+  line-height: 1.65; color: var(--text);
+  white-space: pre-wrap; word-break: break-word;
+}
+
 .proj-links { display: flex; gap: .8rem; flex-wrap: wrap; }
 .proj-link {
   font-family: var(--mono); font-size: .76rem;
@@ -572,6 +639,62 @@ nav, section, footer { position: relative; z-index: 1; }
 .proj-link:hover { background: var(--green); color: #000; }
 .proj-link.ghost { color: var(--text-dim); }
 .proj-link.ghost:hover { color: var(--green); border-color: var(--green); }
+
+/* View All Projects CTA card */
+.proj-viewmore { margin-top: 2rem; }
+.viewmore-card {
+  display: flex; align-items: center; gap: 1.2rem;
+  padding: 1.5rem 1.8rem;
+  background: rgba(8,20,28,.8);
+  border: 1px dashed var(--border2);
+  border-radius: var(--radius-lg);
+  text-decoration: none; color: var(--text);
+  transition: border-color .25s, transform .25s, box-shadow .25s, background .25s;
+  position: relative; overflow: hidden;
+}
+.viewmore-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(0,210,150,.08) 50%, transparent 70%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  opacity: 0; transition: opacity .3s;
+  pointer-events: none;
+}
+.viewmore-card:hover {
+  border-style: solid;
+  border-color: var(--green-dim);
+  background: rgba(8,26,36,.92);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 36px rgba(0,0,0,.45), var(--glow);
+}
+.viewmore-card:hover::before {
+  opacity: 1;
+  animation: vm-sheen 1.4s ease infinite;
+}
+@keyframes vm-sheen {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+.vm-icon {
+  width: 44px; height: 44px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 10px;
+  background: rgba(0,210,150,.08);
+  border: 1px solid rgba(0,210,150,.2);
+  color: var(--green);
+  transition: transform .3s;
+}
+.viewmore-card:hover .vm-icon { transform: rotate(90deg); }
+.vm-icon svg { width: 20px; height: 20px; }
+.vm-text { display: flex; flex-direction: column; gap: .2rem; flex: 1; }
+.vm-title { font-size: 1rem; font-weight: 600; }
+.vm-sub { font-size: .72rem; color: var(--text-dim); }
+.vm-arrow {
+  font-family: var(--mono); font-size: 1.1rem; color: var(--text-dim);
+  transition: transform .25s, color .25s;
+}
+.viewmore-card:hover .vm-arrow { color: var(--green); transform: translateX(6px); }
 
 /* ══════════════════════════════════════════════════════════════
    SKILLS — COMPLETE REDESIGN (Orbital / Radial Clusters)
@@ -1036,12 +1159,6 @@ a.contact-card:hover .cc-arrow {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   CURSOR — canvas overlay
+   (cursor-canvas removed — it was an empty, unused element with
+   no JS ever drawing to it; not a rendered animation)
    ══════════════════════════════════════════════════════════════ */
-#cursor-canvas {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 9999;
-}
