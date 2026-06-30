@@ -1,0 +1,202 @@
+/* ═══════════════════════════════════════════════════════════════
+   PROJECTS PAGE — big version of the home Projects section
+   Rounded boxes, sliding images, key points, filters + search
+   Matches root tokens & motion language from style.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── PAGE HERO ──────────────────────────────────────────────── */
+.pp-hero {
+  position: relative; overflow: hidden;
+  padding: 130px 2.5rem 3.5rem;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+}
+.pp-osc-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: .184; pointer-events: none; /* +15% bloom */
+}
+.pp-hero-scanlines {
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,.08) 2px, rgba(0,0,0,.08) 4px);
+}
+.pp-hero-content {
+  position: relative; z-index: 1;
+  max-width: 760px;
+}
+.pp-back {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-family: var(--mono); font-size: .78rem;
+  color: var(--text-dim); text-decoration: none;
+  margin-bottom: 1.6rem; transition: color .2s, transform .2s;
+}
+.pp-back-arrow { display: inline-block; transition: transform .2s; }
+.pp-back:hover { color: var(--green); }
+.pp-back:hover .pp-back-arrow { transform: translateX(-4px); }
+
+.pp-title {
+  font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+  font-weight: 800; line-height: 1.05;
+  letter-spacing: -.02em; margin: 1.2rem 0 1rem;
+}
+.pp-sub {
+  font-size: 1rem; color: var(--text-dim);
+  line-height: 1.75; max-width: 620px; margin-bottom: 2.2rem;
+}
+.pp-stats { display: flex; align-items: center; gap: 1.5rem; }
+
+/* ── FILTER BAR (sticky) ────────────────────────────────────── */
+.pp-filter-bar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(5,10,14,.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  padding: 1rem 0;
+}
+.pp-filter-bar .container {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.5rem; flex-wrap: wrap;
+}
+.pp-filter { margin: 0; }
+.fcount {
+  font-size: .62rem; opacity: .65; margin-left: .25rem;
+  padding: .05rem .35rem; border-radius: 50px;
+  background: rgba(255,255,255,.08);
+}
+.filter-btn.active .fcount, .filter-btn:hover .fcount {
+  background: rgba(0,0,0,.2);
+}
+
+.pp-search-wrap {
+  display: flex; align-items: center; gap: .5rem;
+  border: 1px solid var(--border2); border-radius: 8px;
+  padding: .4rem .9rem;
+  background: rgba(8,20,28,.7);
+  transition: border-color .2s, box-shadow .2s;
+  min-width: 220px;
+}
+.pp-search-wrap:focus-within {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(0,210,150,.12);
+}
+.pp-search-icon { font-size: .72rem; color: var(--green); }
+.pp-search {
+  background: transparent; border: none; outline: none;
+  color: var(--text); font-family: var(--sans); font-size: .85rem;
+  width: 100%;
+}
+.pp-search::placeholder { color: var(--text-dim); opacity: .6; }
+
+/* ── LIST SECTION ───────────────────────────────────────────── */
+.pp-list-section {
+  position: relative; overflow: hidden;
+  background: linear-gradient(180deg, var(--bg2) 0%, var(--bg3) 100%);
+}
+#pp-bg-canvas {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 0;
+  opacity: .6;
+}
+.pp-list-section .container { position: relative; z-index: 1; }
+
+.pp-empty {
+  text-align: center; color: var(--text-dim);
+  padding: 3rem 0; font-size: .85rem;
+}
+
+/* ── PROJECT GRID — big version of proj-card ───────────────── */
+.pp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr));
+  gap: 2.2rem;
+}
+
+.pp-card {
+  background: rgba(8,20,28,.92);
+  border: 1px solid var(--border);
+  border-radius: 24px; /* extra-rounded, "big version" feel */
+  overflow: hidden;
+  position: relative;
+  transition: border-color .35s, transform .35s, box-shadow .35s;
+  opacity: 0; transform: translateY(24px);
+  animation: pp-card-in .6s ease forwards;
+}
+.pp-card:nth-child(1) { animation-delay: .02s; }
+.pp-card:nth-child(2) { animation-delay: .08s; }
+.pp-card:nth-child(3) { animation-delay: .14s; }
+.pp-card:nth-child(4) { animation-delay: .20s; }
+.pp-card:nth-child(5) { animation-delay: .26s; }
+.pp-card:nth-child(6) { animation-delay: .32s; }
+.pp-card:nth-child(7) { animation-delay: .38s; }
+.pp-card:nth-child(8) { animation-delay: .44s; }
+@keyframes pp-card-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+.pp-card.pp-hide { display: none; }
+.pp-card.pp-filtering-out {
+  opacity: 0; transform: scale(.96);
+}
+
+.pp-card:hover {
+  border-color: var(--green-dim);
+  transform: translateY(-6px);
+  box-shadow: 0 22px 60px rgba(0,0,0,.5), var(--glow);
+}
+.pp-badge {
+  position: absolute; top: 1.1rem; left: 1.1rem;
+  font-family: var(--mono); font-size: .65rem;
+  padding: .3rem .8rem; border-radius: 50px;
+  background: rgba(0,210,150,.18); color: var(--green);
+  border: 1px solid var(--green-dim); z-index: 3;
+  backdrop-filter: blur(4px);
+}
+
+/* Slider — same mechanics as home, bigger image area */
+.pp-slider { position: relative; overflow: hidden; border-radius: 24px 24px 0 0; }
+.pp-slider-track {
+  display: flex;
+  transition: transform .45s cubic-bezier(.25,.8,.25,1);
+}
+.pp-slide { min-width: 100%; aspect-ratio: 16/10; overflow: hidden; }
+.pp-slide img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(.78) saturate(.92);
+  transition: filter .4s, transform .6s;
+}
+.pp-card:hover .pp-slide img {
+  filter: brightness(.9) saturate(1.08);
+  transform: scale(1.04);
+}
+
+.pp-info { padding: 1.7rem 1.8rem 1.9rem; }
+.pp-card-title {
+  font-size: 1.3rem; font-weight: 700;
+  margin-bottom: .6rem; letter-spacing: -.01em;
+}
+
+/* Specs row — chip-like, mirrors hero terminal accents */
+.pp-specs {
+  display: flex; flex-wrap: wrap; gap: .6rem 1.4rem;
+  margin: .9rem 0 1.1rem;
+  padding: .8rem 1rem;
+  background: rgba(0,0,0,.25);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.pp-specs .spec {
+  font-size: .76rem; color: var(--text-dim);
+}
+
+/* ── VIEWMORE CARD reused styling already in style.css ── */
+
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .pp-filter-bar .container { flex-direction: column; align-items: stretch; }
+  .pp-search-wrap { width: 100%; }
+  .pp-hero { padding-top: 110px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-card { animation: none; opacity: 1; transform: none; }
+}
