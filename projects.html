@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Projects | Gaurav Ahir — Embedded Systems Engineer</title>
+<meta name="description" content="Full project archive — embedded firmware, RTOS, PCB design, and IoT builds by Gaurav Ahir." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/projects.css" />
+</head>
+<body>
+
+<!-- ── GLOBAL PARTICLE FIELD ── -->
+<canvas id="particle-field"></canvas>
+
+<!-- ═══════════════════════════════════════════ NAV ═══ -->
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-logo" style="text-decoration:none;">
+    <span class="logo-bracket">&lt;</span>
+    <span class="logo-name">GA</span>
+    <span class="logo-bracket">/&gt;</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#hero"     class="nav-link">Home</a></li>
+    <li><a href="index.html#about"    class="nav-link">About</a></li>
+    <li><a href="projects.html" class="nav-link active">Projects</a></li>
+    <li><a href="index.html#skills"   class="nav-link">Skills</a></li>
+    <li><a href="index.html#timeline" class="nav-link">Timeline</a></li>
+    <li><a href="index.html#blog"     class="nav-link">Blog</a></li>
+    <li><a href="index.html#contact"  class="nav-link">Contact</a></li>
+  </ul>
+  <a href="index.html#contact" class="nav-cta">Hire Me</a>
+  <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════════ PAGE HERO ═══ -->
+<section class="pp-hero" id="pp-hero">
+  <canvas id="pp-osc" class="pp-osc-canvas"></canvas>
+  <div class="pp-hero-scanlines"></div>
+  <div class="container pp-hero-content">
+    <a href="index.html" class="pp-back">
+      <span class="pp-back-arrow">←</span> Back to Home
+    </a>
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      <span class="mono">PROJECT_ARCHIVE — FULL BUILD LOG</span>
+    </div>
+    <h1 class="pp-title">All <span class="accent">Projects</span></h1>
+    <p class="pp-sub">Every board I've brought up, every kernel I've debugged at 2am. <span class="mono accent">8</span> builds across firmware, RTOS, PCB design, and IoT — filter by category below.</p>
+
+    <div class="pp-stats">
+      <div class="stat">
+        <span class="stat-num" id="pp-stat-total">8</span>
+        <span class="stat-label">Total Builds</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num">4+</span>
+        <span class="stat-label">MCU Families</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num" id="pp-stat-shown">8</span>
+        <span class="stat-label">Showing</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ FILTERS ═══ -->
+<section class="pp-filter-bar">
+  <div class="container">
+    <div class="proj-filter pp-filter">
+      <button class="filter-btn active" data-filter="all">All <span class="fcount">8</span></button>
+      <button class="filter-btn" data-filter="iot">IoT <span class="fcount">5</span></button>
+      <button class="filter-btn" data-filter="firmware">Firmware <span class="fcount">4</span></button>
+      <button class="filter-btn" data-filter="rtos">RTOS <span class="fcount">2</span></button>
+      <button class="filter-btn" data-filter="pcb">PCB <span class="fcount">2</span></button>
+    </div>
+    <div class="pp-search-wrap">
+      <span class="pp-search-icon mono">grep</span>
+      <input type="text" id="pp-search" class="pp-search" placeholder="search projects..." autocomplete="off" />
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ PROJECTS LIST ═══ -->
+<!-- pp-bg-canvas injected by JS -->
+<section class="section pp-list-section" id="pp-list">
+  <div class="container">
+
+    <div class="pp-grid" id="pp-grid">
+
+      <!-- PROJECT 1 -->
+      <article class="pp-card" data-category="iot firmware" data-search="perimeter intrusion detection system lora ai ml camera gyro mmwave drdo">
+        <div class="pp-badge">⭐ Featured</div>
+        <div class="pp-slider" id="pp-slider-1">
+          <div class="pp-slider-track" id="pp-track-1">
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&q=80" alt="Perimeter Intrusion Detection System - Board" loading="lazy" /></div>
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=900&q=80" alt="Perimeter Intrusion Detection System - Sensor Node" loading="lazy" /></div>
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=900&q=80" alt="Perimeter Intrusion Detection System - Field Demo" loading="lazy" /></div>
+          </div>
+          <button class="slide-btn prev" onclick="ppSlide('pp-track-1','pp-dots-1',-1)">&#8249;</button>
+          <button class="slide-btn next" onclick="ppSlide('pp-track-1','pp-dots-1',1)">&#8250;</button>
+          <div class="slide-dots" id="pp-dots-1">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+        </div>
+        <div class="pp-info">
+          <div class="proj-meta">
+            <span class="proj-tag iot">IoT</span>
+            <span class="proj-tag firmware">Firmware</span>
+            <span class="proj-lang">Embedded C / LoRa</span>
+          </div>
+          <h3 class="pp-card-title">Perimeter Intrusion Detection System</h3>
+          <p class="proj-desc">LoRa-based, three-layer centralized advanced perimeter intrusion detection system. Combines UART/I2C/SPI protocol-based sensors, AI/ML-based camera modules, and wireless communication over LoRa with a 9-axis gyro sensor and an mm-Wave motion detection sensor.</p>
+          <div class="pp-specs">
+            <span class="spec"><span class="mono accent">Comms:</span> LoRa, UART/I2C/SPI</span>
+            <span class="spec"><span class="mono accent">Sensors:</span> 9-Axis Gyro, mm-Wave</span>
+            <span class="spec"><span class="mono accent">Architecture:</span> 3-layer centralized</span>
+          </div>
+          <div class="proj-keypoints">
+            <div class="kp-title">Key Highlights</div>
+            <ul class="kp-list">
+              <li>Three-layer centralized architecture with AI/ML camera modules</li>
+              <li>Firmware for sensor data processing and event flag generation</li>
+              <li>FIFO-based data transmission with ISR-controlled reception</li>
+              <li>Demonstrated at DRDO Bhavan Delhi, Jaisalmer Army Camp &amp; Gandhinagar Army Camp</li>
+            </ul>
+          </div>
+          <div class="proj-code">
+            <button class="code-toggle" onclick="toggleCode('code-1', this)">
+              <span class="ct-icon">›</span>
+              <span class="ct-label">&lt;/&gt; ISR-Controlled FIFO Reception</span>
+              <span class="ct-hint">View</span>
+            </button>
+            <div class="code-panel" id="code-1">
+              <div class="code-block">
+                <span class="placeholder-tag">⚠ placeholder — real snippet pending</span>
+                <pre><code>// TODO: replace with the real ISR-controlled FIFO
+// reception logic from the Perimeter Intrusion
+// Detection System firmware.</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="proj-links">
+            <a href="#" class="proj-link">GitHub →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 2 -->
+      <article class="pp-card" data-category="iot pcb" data-search="railway water tank level measurement iot quectel ec200u 4g lte mqtt cris">
+        <div class="pp-slider" id="pp-slider-2">
+          <div class="pp-slider-track" id="pp-track-2">
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1597852074816-d933c7d2b988?w=900&q=80" alt="Railway Water Tank Level Measurement IoT Device" loading="lazy" /></div>
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1562408590-e32931084e23?w=900&q=80" alt="Railway Water Tank IoT Device - PCB" loading="lazy" /></div>
+          </div>
+          <button class="slide-btn prev" onclick="ppSlide('pp-track-2','pp-dots-2',-1)">&#8249;</button>
+          <button class="slide-btn next" onclick="ppSlide('pp-track-2','pp-dots-2',1)">&#8250;</button>
+          <div class="slide-dots" id="pp-dots-2">
+            <span class="dot active"></span><span class="dot"></span>
+          </div>
+        </div>
+        <div class="pp-info">
+          <div class="proj-meta">
+            <span class="proj-tag iot">IoT</span>
+            <span class="proj-tag pcb">PCB</span>
+            <span class="proj-lang">Embedded C / Quectel EC200U</span>
+          </div>
+          <h3 class="pp-card-title">Railway Water Tank Level Measurement IoT Device</h3>
+          <p class="proj-desc">4G LTE IoT device using a Quectel EC200U modem with an AT command stack, transmitting tank level, GPS coordinates, and battery telemetry to the CRIS server via MQTT over TCP/IP. Full lifecycle from tender review through production deployment.</p>
+          <div class="pp-specs">
+            <span class="spec"><span class="mono accent">Modem:</span> Quectel EC200U (4G LTE)</span>
+            <span class="spec"><span class="mono accent">Comms:</span> MQTT over TCP/IP</span>
+            <span class="spec"><span class="mono accent">Power:</span> 200mA → 40mA (-80%)</span>
+          </div>
+          <div class="proj-keypoints">
+            <div class="kp-title">Key Highlights</div>
+            <ul class="kp-list">
+              <li>4–20mA current loop sensor via ADC with calibrated scaling, plus I2C/UART peripherals</li>
+              <li>Low-power sleep-wake firmware — 200mA to 40mA, an 80% reduction in idle draw</li>
+              <li>Managed full lifecycle: tender review, component selection, schematic, 4-layer PCB, QC, deployment</li>
+            </ul>
+          </div>
+          <div class="proj-code">
+            <button class="code-toggle" onclick="toggleCode('code-2', this)">
+              <span class="ct-icon">›</span>
+              <span class="ct-label">&lt;/&gt; AT-Command Handling / ADC Scaling</span>
+              <span class="ct-hint">View</span>
+            </button>
+            <div class="code-panel" id="code-2">
+              <div class="code-block">
+                <span class="placeholder-tag">⚠ placeholder — real snippet pending</span>
+                <pre><code>// TODO: replace with the real Quectel EC200U
+// AT-command handling, or the 4-20mA ADC scaling/
+// calibration logic, from this project's firmware.</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="proj-links">
+            <a href="#" class="proj-link">GitHub →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 3 -->
+      <article class="pp-card" data-category="firmware" data-search="payment announcer device stm32 sim800l gsm sms fifo">
+        <div class="pp-slider" id="pp-slider-3">
+          <div class="pp-slider-track" id="pp-track-3">
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&q=80" alt="Payment Announcer Device" loading="lazy" /></div>
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=900&q=80" alt="Payment Announcer Device - PCB" loading="lazy" /></div>
+          </div>
+          <button class="slide-btn prev" onclick="ppSlide('pp-track-3','pp-dots-3',-1)">&#8249;</button>
+          <button class="slide-btn next" onclick="ppSlide('pp-track-3','pp-dots-3',1)">&#8250;</button>
+          <div class="slide-dots" id="pp-dots-3">
+            <span class="dot active"></span><span class="dot"></span>
+          </div>
+        </div>
+        <div class="pp-info">
+          <div class="proj-meta">
+            <span class="proj-tag firmware">Firmware</span>
+            <span class="proj-lang">C / SIM800L</span>
+          </div>
+          <h3 class="pp-card-title">Payment Announcer Device</h3>
+          <p class="proj-desc">STM32-based device using a SIM800L GSM module; firmware written in C using STM32CubeIDE to parse incoming payment SMS notifications and announce them via audio.</p>
+          <div class="pp-specs">
+            <span class="spec"><span class="mono accent">MCU:</span> STM32</span>
+            <span class="spec"><span class="mono accent">GSM:</span> SIM800L</span>
+            <span class="spec"><span class="mono accent">IDE:</span> STM32CubeIDE</span>
+          </div>
+          <div class="proj-keypoints">
+            <div class="kp-title">Key Highlights</div>
+            <ul class="kp-list">
+              <li>Interrupt-driven UART reception with circular FIFO buffer for SMS parsing</li>
+              <li>Audio amplification for live payment announcements</li>
+              <li>Non-blocking state machine for GSM health monitoring and network recovery</li>
+            </ul>
+          </div>
+          <div class="proj-code">
+            <button class="code-toggle" onclick="toggleCode('code-3', this)">
+              <span class="ct-icon">›</span>
+              <span class="ct-label">&lt;/&gt; Circular UART FIFO for SMS Parsing</span>
+              <span class="ct-hint">View</span>
+            </button>
+            <div class="code-panel" id="code-3">
+              <div class="code-block">
+                <span class="placeholder-tag">⚠ placeholder — real snippet pending</span>
+                <pre><code>// TODO: replace with the real interrupt-driven UART
+// circular FIFO buffer logic used for SMS parsing
+// in the Payment Announcer Device firmware.</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="proj-links">
+            <a href="#" class="proj-link">GitHub →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 4 -->
+      <article class="pp-card" data-category="iot" data-search="lora mesh sensor network sx1276 stm32l0 tdma">
+        <div class="pp-slider" id="pp-slider-4">
+          <div class="pp-slider-track" id="pp-track-4">
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80" alt="LoRa Gateway" loading="lazy" /></div>
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=900&q=80" alt="LoRa Network" loading="lazy" /></div>
+          </div>
+          <button class="slide-btn prev" onclick="ppSlide('pp-track-4','pp-dots-4',-1)">&#8249;</button>
+          <button class="slide-btn next" onclick="ppSlide('pp-track-4','pp-dots-4',1)">&#8250;</button>
+          <div class="slide-dots" id="pp-dots-4">
+            <span class="dot active"></span><span class="dot"></span>
+          </div>
+        </div>
+        <div class="pp-info">
+          <div class="proj-meta">
+            <span class="proj-tag iot">IoT</span>
+            <span class="proj-lang">C++ / LoRaWAN</span>
+          </div>
+          <h3 class="pp-card-title">LoRa Mesh Sensor Network</h3>
+          <p class="proj-desc">Long-range sensor mesh using SX1276 LoRa modules across STM32L0 nodes. Custom MAC layer with TDMA scheduling for synchronized multi-node transmission without collisions.</p>
+          <div class="pp-specs">
+            <span class="spec"><span class="mono accent">MCU:</span> STM32L052</span>
+            <span class="spec"><span class="mono accent">Radio:</span> SX1276</span>
+            <span class="spec"><span class="mono accent">Range:</span> 5km @ SF12</span>
+          </div>
+          <div class="proj-keypoints">
+            <div class="kp-title">Key Highlights</div>
+            <ul class="kp-list">
+              <li>Custom TDMA MAC — no LoRaWAN stack dependency</li>
+              <li>Achieved 5km range with SF12/125kHz</li>
+              <li>Node power: 2.1μA sleep, 12mA active</li>
+            </ul>
+          </div>
+          <div class="proj-links">
+            <a href="#" class="proj-link">GitHub →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 5 -->
+      <article class="pp-card" data-category="firmware" data-search="audio fft analyzer cmsis-dsp arm cortex-m4 spectrum">
+        <div class="pp-slider" id="pp-slider-5">
+          <div class="pp-slider-track" id="pp-track-5">
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=900&q=80" alt="Audio FFT Analyzer LED matrix" loading="lazy" /></div>
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=900&q=80" alt="Audio FFT Analyzer board" loading="lazy" /></div>
+          </div>
+          <button class="slide-btn prev" onclick="ppSlide('pp-track-5','pp-dots-5',-1)">&#8249;</button>
+          <button class="slide-btn next" onclick="ppSlide('pp-track-5','pp-dots-5',1)">&#8250;</button>
+          <div class="slide-dots" id="pp-dots-5">
+            <span class="dot active"></span><span class="dot"></span>
+          </div>
+        </div>
+        <div class="pp-info">
+          <div class="proj-meta">
+            <span class="proj-tag firmware">Firmware</span>
+            <span class="proj-lang">C / CMSIS-DSP</span>
+          </div>
+          <h3 class="pp-card-title">Audio FFT Spectrum Analyzer</h3>
+          <p class="proj-desc">Real-time audio spectrum analyzer using ARM CMSIS-DSP on a Cortex-M4F. 128-point FFT running at 44.1 kHz sample rate, output driven to a WS2812 LED matrix for a live visualizer.</p>
+          <div class="pp-specs">
+            <span class="spec"><span class="mono accent">MCU:</span> STM32F446RE</span>
+            <span class="spec"><span class="mono accent">DSP:</span> CMSIS-DSP FFT</span>
+            <span class="spec"><span class="mono accent">Audio I/O:</span> I2S / SAI</span>
+          </div>
+          <div class="proj-keypoints">
+            <div class="kp-title">Key Highlights</div>
+            <ul class="kp-list">
+              <li>128-point real-time FFT at 44.1kHz sample rate</li>
+              <li>DMA-driven I2S capture — zero CPU-blocking audio reads</li>
+              <li>WS2812 matrix driven via SPI bit-banging at 800kHz</li>
+            </ul>
+          </div>
+          <div class="proj-links">
+            <a href="#" class="proj-link">GitHub →</a>
+            <a href="#" class="proj-link ghost">Demo Video →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 6 -->
+      <article class="pp-card" data-category="iot rtos" data-search="can bus data logger automotive obd-ii stm32g4 sd card">
+        <div class="pp-slider" id="pp-slider-6">
+          <div class="pp-slider-track" id="pp-track-6">
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=900&q=80" alt="CAN Bus Data Logger in car" loading="lazy" /></div>
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1486684228390-9c4d3fb74e4c?w=900&q=80" alt="CAN Bus Data Logger circuit" loading="lazy" /></div>
+          </div>
+          <button class="slide-btn prev" onclick="ppSlide('pp-track-6','pp-dots-6',-1)">&#8249;</button>
+          <button class="slide-btn next" onclick="ppSlide('pp-track-6','pp-dots-6',1)">&#8250;</button>
+          <div class="slide-dots" id="pp-dots-6">
+            <span class="dot active"></span><span class="dot"></span>
+          </div>
+        </div>
+        <div class="pp-info">
+          <div class="proj-meta">
+            <span class="proj-tag rtos">RTOS</span>
+            <span class="proj-tag iot">IoT</span>
+            <span class="proj-lang">C / STM32G4</span>
+          </div>
+          <h3 class="pp-card-title">CAN Bus Data Logger</h3>
+          <p class="proj-desc">Automotive CAN bus data logger with SD card logging, GPS timestamping, and real-time decoding of OBD-II PIDs. PCB designed in KiCad with isolated CAN transceiver stage.</p>
+          <div class="pp-specs">
+            <span class="spec"><span class="mono accent">MCU:</span> STM32G474</span>
+            <span class="spec"><span class="mono accent">Bus:</span> CAN FD</span>
+            <span class="spec"><span class="mono accent">Storage:</span> SD / FAT32</span>
+          </div>
+          <div class="proj-keypoints">
+            <div class="kp-title">Key Highlights</div>
+            <ul class="kp-list">
+              <li>Real-time OBD-II PID decoding at 500kbps</li>
+              <li>FatFS logging to SD with timestamp-indexed CSV files</li>
+              <li>GPS-synced logging for route + telemetry correlation</li>
+            </ul>
+          </div>
+          <div class="proj-links">
+            <a href="#" class="proj-link">GitHub →</a>
+            <a href="#" class="proj-link ghost">KiCad Files →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 7 -->
+      <article class="pp-card" data-category="rtos firmware" data-search="industrial temperature controller modbus rtu rs-485 pic32">
+        <div class="pp-slider" id="pp-slider-7">
+          <div class="pp-slider-track" id="pp-track-7">
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=900&q=80" alt="Industrial Temperature Controller panel" loading="lazy" /></div>
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=900&q=80" alt="Industrial Temperature Controller wiring" loading="lazy" /></div>
+          </div>
+          <button class="slide-btn prev" onclick="ppSlide('pp-track-7','pp-dots-7',-1)">&#8249;</button>
+          <button class="slide-btn next" onclick="ppSlide('pp-track-7','pp-dots-7',1)">&#8250;</button>
+          <div class="slide-dots" id="pp-dots-7">
+            <span class="dot active"></span><span class="dot"></span>
+          </div>
+        </div>
+        <div class="pp-info">
+          <div class="proj-meta">
+            <span class="proj-tag rtos">RTOS</span>
+            <span class="proj-tag firmware">Firmware</span>
+            <span class="proj-lang">C / PIC32MX</span>
+          </div>
+          <h3 class="pp-card-title">Industrial Temp Controller</h3>
+          <p class="proj-desc">Multi-zone temperature controller with a Modbus RTU slave interface, PWM heater control, safety watchdog, and EEPROM-backed config persistence for industrial panel mounting.</p>
+          <div class="pp-specs">
+            <span class="spec"><span class="mono accent">MCU:</span> PIC32MX270</span>
+            <span class="spec"><span class="mono accent">Protocol:</span> Modbus RTU</span>
+            <span class="spec"><span class="mono accent">I/O:</span> RS-485, 4 zones</span>
+          </div>
+          <div class="proj-keypoints">
+            <div class="kp-title">Key Highlights</div>
+            <ul class="kp-list">
+              <li>4-zone independent PID heater control loops</li>
+              <li>Modbus RTU slave with custom register map</li>
+              <li>Hardware watchdog + EEPROM config persistence</li>
+            </ul>
+          </div>
+          <div class="proj-links">
+            <a href="#" class="proj-link">GitHub →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 8 -->
+      <article class="pp-card" data-category="iot pcb" data-search="ble fitness tracker nrf52840 pcb wearable battery">
+        <div class="pp-slider" id="pp-slider-8">
+          <div class="pp-slider-track" id="pp-track-8">
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1557438159-51eec7a6c9e8?w=900&q=80" alt="BLE Wearable Tracker board" loading="lazy" /></div>
+            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1576243345690-4e4b79b63288?w=900&q=80" alt="BLE Wearable Tracker assembled" loading="lazy" /></div>
+          </div>
+          <button class="slide-btn prev" onclick="ppSlide('pp-track-8','pp-dots-8',-1)">&#8249;</button>
+          <button class="slide-btn next" onclick="ppSlide('pp-track-8','pp-dots-8',1)">&#8250;</button>
+          <div class="slide-dots" id="pp-dots-8">
+            <span class="dot active"></span><span class="dot"></span>
+          </div>
+        </div>
+        <div class="pp-info">
+          <div class="proj-meta">
+            <span class="proj-tag iot">IoT</span>
+            <span class="proj-tag pcb">PCB</span>
+            <span class="proj-lang">C / nRF52</span>
+          </div>
+          <h3 class="pp-card-title">BLE Wearable Activity Tracker</h3>
+          <p class="proj-desc">Coin-cell-powered wearable built around the nRF52840, with a custom 2-layer flex-friendly PCB, accelerometer-based step counting, and a companion BLE app for sync and charting.</p>
+          <div class="pp-specs">
+            <span class="spec"><span class="mono accent">MCU:</span> nRF52840</span>
+            <span class="spec"><span class="mono accent">Radio:</span> BLE 5.0</span>
+            <span class="spec"><span class="mono accent">Battery:</span> 45mAh, ~6 days</span>
+          </div>
+          <div class="proj-keypoints">
+            <div class="kp-title">Key Highlights</div>
+            <ul class="kp-list">
+              <li>Custom 2-layer PCB sized to fit a 20mm wearable enclosure</li>
+              <li>LIS2DH accelerometer step-detection algorithm tuned in firmware</li>
+              <li>BLE GATT service for live sync, ~6 day battery life</li>
+            </ul>
+          </div>
+          <div class="proj-links">
+            <a href="#" class="proj-link">GitHub →</a>
+            <a href="#" class="proj-link ghost">Gerbers →</a>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- end pp-grid -->
+
+    <p class="pp-empty mono" id="pp-empty" hidden>// no projects match this query — try a different filter or search term</p>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ FOOTER ═══ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <a href="index.html" class="nav-logo" style="text-decoration:none; margin-right:0;">
+        <span class="logo-bracket">&lt;</span>
+        <span class="logo-name">GA</span>
+        <span class="logo-bracket">/&gt;</span>
+      </a>
+      <p class="footer-tagline mono">// built with ❤️ and too much solder</p>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Gaurav Ahir — All rights reserved.</span>
+      <span class="mono accent">uptime: <span id="uptime">0s</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/projects.js"></script>
+</body>
+</html>
