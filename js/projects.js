@@ -153,17 +153,20 @@ function ppOnVisible(el, startLoop, stopLoop) {
   const MAX_DIST = 130;
   const MAX_SPEED = 0.5;
 
-  // Pre-rendered halo sprites, one per accent colour — cheap
-  // drawImage() blit instead of a live shadowBlur/CSS-filter blur on
-  // every glowing node/pulse/frame (CSS `filter: blur()` looks free
-  // on a GPU but is ruinously expensive without one).
-  const GLOW_SIZE = 64; // higher-res source so the falloff stays smooth once scaled up
+  function ppRandByte() {
+    return '0x' + Math.floor(Math.random() * 256)
+      .toString(16).toUpperCase().padStart(2, '0');
+  }
+
+  const PP_FONT = '13px "JetBrains Mono", monospace';
+
+  const GLOW_SIZE = 80;
   const COLOURS = [
     { hex: '#00d296', rgb: '0,210,150' },
     { hex: '#00d296', rgb: '0,210,150' },
     { hex: '#00d296', rgb: '0,210,150' },
     { hex: '#00c6ff', rgb: '0,198,255' },
-    { hex: '#ffffff', rgb: '255,255,255' },
+    { hex: '#c8fff0', rgb: '200,255,240' },
   ];
   const glowSprites = COLOURS.map(c => {
     const spr = document.createElement('canvas');
@@ -198,47 +201,34 @@ function ppOnVisible(el, startLoop, stopLoop) {
     for (let i = 0; i < NODE_COUNT; i++) {
       const colIdx = ppRandInt(0, COLOURS.length - 1);
       nodes.push({
-        x: ppRand(0, W), y: ppRand(0, H),
-        r: ppRand(0.5, 1.6), // tiny — was 1.5-4
-        vx: ppRand(-MAX_SPEED, MAX_SPEED), vy: ppRand(-MAX_SPEED, MAX_SPEED),
-        glow: Math.random() > 0.78,
+        x:         ppRand(0, W),
+        y:         ppRand(0, H),
+        r:         3,
+        vx:        ppRand(-MAX_SPEED, MAX_SPEED),
+        vy:        ppRand(-MAX_SPEED, MAX_SPEED),
+        glow:      Math.random() > 0.72,
+        glowAlpha: ppRand(0.22, 0.5),
+        alpha:     ppRand(0.22, 0.42),
         colIdx,
-        col: COLOURS[colIdx].hex,
+        col:  COLOURS[colIdx].hex,
+        byte: ppRandByte(),
       });
     }
   }
 
-  // One O(n²) pass per frame: drifts nodes, bounces them off the
-  // canvas edges and off each other, and rebuilds the edge list from
-  // the freshly-updated positions.
   function physics() {
     for (const n of nodes) {
       n.x += n.vx; n.y += n.vy;
-      if (n.x < n.r) { n.x = n.r; n.vx *= -1; }
-      else if (n.x > W - n.r) { n.x = W - n.r; n.vx *= -1; }
-      if (n.y < n.r) { n.y = n.r; n.vy *= -1; }
-      else if (n.y > H - n.r) { n.y = H - n.r; n.vy *= -1; }
+      if (n.x < 0) { n.x = 0; n.vx *= -1; }
+      else if (n.x > W) { n.x = W; n.vx *= -1; }
+      if (n.y < 0) { n.y = 0; n.vy *= -1; }
+      else if (n.y > H) { n.y = H; n.vy *= -1; }
     }
-
     edges = [];
     for (let i = 0; i < nodes.length; i++) {
-      const a = nodes[i];
       for (let j = i + 1; j < nodes.length; j++) {
-        const b = nodes[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
+        const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-
-        const minDist = a.r + b.r + 1.5;
-        if (dist > 0 && dist < minDist) {
-          const nx = dx / dist, ny = dy / dist;
-          const overlap = (minDist - dist) / 2;
-          a.x += nx * overlap; a.y += ny * overlap;
-          b.x -= nx * overlap; b.y -= ny * overlap;
-          const avn = a.vx * nx + a.vy * ny, bvn = b.vx * nx + b.vy * ny;
-          a.vx += (bvn - avn) * nx; a.vy += (bvn - avn) * ny;
-          b.vx += (avn - bvn) * nx; b.vy += (avn - bvn) * ny;
-        }
-
         if (dist < MAX_DIST) edges.push({ a: i, b: j, alpha: ppLerp(0.07, 0.24, 1 - dist / MAX_DIST) });
       }
     }
@@ -280,30 +270,37 @@ function ppOnVisible(el, startLoop, stopLoop) {
     ctx.clearRect(0, 0, W, H);
     physics();
     drawEdges();
+    /* Pulse dots along edges */
     pulses = pulses.filter(p => {
       p.t += p.speed;
       if (p.t > 1) return false;
       const a = nodes[p.edge.a], b = nodes[p.edge.b];
       const px = ppLerp(a.x, b.x, p.t), py = ppLerp(a.y, b.y, p.t);
-      drawGlow(0, px, py, 1.2, 0.4);
-      ctx.beginPath(); ctx.arc(px, py, 1.6, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0,210,150,.95)';
-      ctx.fill();
+      drawGlow(0, px, py, 1.0, 0.38);
+      ctx.beginPath(); ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+      ctx.globalAlpha = 0.95;
+      ctx.fillStyle = '#00d296'; ctx.fill();
+      ctx.globalAlpha = 1;
       return true;
     });
-    // Nodes — a soft halo (the "blur") behind a tiny sharp core on top,
-    // so the field reads as in-focus particles over a blurry one. Only
-    // the ~quarter of nodes flagged "glow" pay for the sprite blit —
-    // every node having one was the single biggest cost in this loop,
-    // and this canvas already covers the whole (very tall) card grid.
+
+    /* Hex byte text nodes */
+    ctx.font = PP_FONT;
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'middle';
+
     nodes.forEach(n => {
-      if (n.glow) drawGlow(n.colIdx, n.x, n.y, 1.52, 0.34);
-      ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-      ctx.globalAlpha = n.glow ? 0.95 : 0.7;
-      ctx.fillStyle = n.col;
-      ctx.fill();
-      ctx.globalAlpha = 1;
+      if (n.glow) drawGlow(n.colIdx, n.x, n.y, 1.6, n.glowAlpha);
     });
+    nodes.forEach(n => {
+      ctx.globalAlpha = n.glow ? Math.min(n.glowAlpha * 1.9, 1) : n.alpha;
+      ctx.fillStyle   = n.col;
+      ctx.fillText(n.byte, n.x, n.y);
+    });
+
+    ctx.globalAlpha  = 1;
+    ctx.textAlign    = 'left';
+    ctx.textBaseline = 'alphabetic';
 
     rafId = requestAnimationFrame(draw);
   }

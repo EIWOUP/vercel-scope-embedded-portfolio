@@ -448,15 +448,20 @@ function onVisible(el, startLoop, stopLoop) {
   const MAX_DIST = 130;
   const MAX_SPEED = 0.5;
 
+  function randByte() {
+    return '0x' + Math.floor(Math.random() * 256).toString(16).toUpperCase().padStart(2, '0');
+  }
+  const MAIN_FONT = '13px "JetBrains Mono", monospace';
+
   // Pre-rendered halo sprites, one per accent colour (one-time cost),
   // reused via drawImage instead of recomputing a blur every frame.
-  const GLOW_SIZE = 64; // higher-res source so the falloff stays smooth once scaled up
+  const GLOW_SIZE = 80;
   const COLOURS = [
     { hex: '#00d296', rgb: '0,210,150' },
     { hex: '#00d296', rgb: '0,210,150' },
     { hex: '#00d296', rgb: '0,210,150' },
     { hex: '#00c6ff', rgb: '0,198,255' },
-    { hex: '#ffffff', rgb: '255,255,255' },
+    { hex: '#c8fff0', rgb: '200,255,240' },
   ];
   const glowSprites = COLOURS.map(c => {
     const spr = document.createElement('canvas');
@@ -493,48 +498,32 @@ function onVisible(el, startLoop, stopLoop) {
       const colIdx = randInt(0, COLOURS.length - 1);
       nodes.push({
         x: rand(0, W), y: rand(0, H),
-        r: rand(0.5, 1.6), // tiny — was 1.5-4
+        r: 3,
         vx: rand(-MAX_SPEED, MAX_SPEED), vy: rand(-MAX_SPEED, MAX_SPEED),
         glow: Math.random() > 0.78,
         colIdx,
         col: COLOURS[colIdx].hex,
+        byte: randByte(),
+        glowAlpha: rand(0.22, 0.5),
+        alpha: rand(0.22, 0.42),
       });
     }
   }
 
-  // One O(n²) pass per frame: drifts nodes, bounces them off the
-  // canvas edges and off each other, and rebuilds the edge list from
-  // the freshly-updated positions (replaces the old static buildGraph
-  // edge pass, since nodes now move).
   function physics() {
     for (const n of nodes) {
       n.x += n.vx; n.y += n.vy;
-      if (n.x < n.r) { n.x = n.r; n.vx *= -1; }
-      else if (n.x > W - n.r) { n.x = W - n.r; n.vx *= -1; }
-      if (n.y < n.r) { n.y = n.r; n.vy *= -1; }
-      else if (n.y > H - n.r) { n.y = H - n.r; n.vy *= -1; }
+      if (n.x < 0) { n.x = 0; n.vx *= -1; }
+      else if (n.x > W) { n.x = W; n.vx *= -1; }
+      if (n.y < 0) { n.y = 0; n.vy *= -1; }
+      else if (n.y > H) { n.y = H; n.vy *= -1; }
     }
 
     edges = [];
     for (let i = 0; i < nodes.length; i++) {
-      const a = nodes[i];
       for (let j = i + 1; j < nodes.length; j++) {
-        const b = nodes[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
+        const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-
-        const minDist = a.r + b.r + 1.5;
-        if (dist > 0 && dist < minDist) {
-          // soft elastic bounce: push apart, swap velocity along the normal
-          const nx = dx / dist, ny = dy / dist;
-          const overlap = (minDist - dist) / 2;
-          a.x += nx * overlap; a.y += ny * overlap;
-          b.x -= nx * overlap; b.y -= ny * overlap;
-          const avn = a.vx * nx + a.vy * ny, bvn = b.vx * nx + b.vy * ny;
-          a.vx += (bvn - avn) * nx; a.vy += (bvn - avn) * ny;
-          b.vx += (avn - bvn) * nx; b.vy += (avn - bvn) * ny;
-        }
-
         if (dist < MAX_DIST) {
           edges.push({ a: i, b: j, alpha: lerp(0.07, 0.24, 1 - dist / MAX_DIST) });
         }
@@ -601,20 +590,18 @@ function onVisible(el, startLoop, stopLoop) {
       return true;
     });
 
-    // Nodes — a soft halo (the "blur") behind a tiny sharp core on
-    // top, so the field reads as in-focus particles over a blurry one.
-    // Only the ~quarter of nodes flagged "glow" pay for the (alpha-
-    // blended, comparatively expensive) sprite blit — every node
-    // having one was the single biggest cost in this loop.
+    ctx.font = MAIN_FONT;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    nodes.forEach(n => { if (n.glow) drawGlow(n.colIdx, n.x, n.y, 1.6, n.glowAlpha); });
     nodes.forEach(n => {
-      if (n.glow) drawGlow(n.colIdx, n.x, n.y, 1.52, 0.34);
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-      ctx.globalAlpha = n.glow ? 0.95 : 0.7;
+      ctx.globalAlpha = n.glow ? Math.min(n.glowAlpha * 1.9, 1) : n.alpha;
       ctx.fillStyle = n.col;
-      ctx.fill();
-      ctx.globalAlpha = 1;
+      ctx.fillText(n.byte, n.x, n.y);
     });
+    ctx.globalAlpha = 1;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
 
     rafId = requestAnimationFrame(draw);
   }
@@ -816,9 +803,11 @@ function onVisible(el, startLoop, stopLoop) {
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        links.forEach(l => l.classList.remove('active'));
         const active = links.find(l => l.getAttribute('href') === '#' + e.target.id);
-        if (active) active.classList.add('active');
+        if (active) {
+          links.forEach(l => l.classList.remove('active'));
+          active.classList.add('active');
+        }
       }
     });
   }, { threshold: 0.35 });
