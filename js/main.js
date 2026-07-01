@@ -14,6 +14,20 @@ const randInt = (min, max) => Math.floor(rand(min, max + 1));
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
 
+/* Every canvas loop below drives motion off this rather than a raw
+   per-frame counter, so speed stays constant in real time instead of
+   being tied to however often rAF happens to fire. On phones/tablets
+   frame delivery is uneven (dropped frames, variable refresh rates,
+   thermal throttling) — a fixed "+= X per frame" step reads as
+   stutter there even though it's silky on a steady desktop 60Hz
+   monitor. `norm` = how many 60fps-equivalent ticks actually elapsed,
+   clamped so a tab-switch stall doesn't cause a visible jump. */
+const FRAME_MS = 1000 / 60;
+function normDelta(now, lastT) {
+  const dt = lastT === null ? FRAME_MS : now - lastT;
+  return clamp(dt / FRAME_MS, 0, 4);
+}
+
 /* ═══════════════════════════════════════════════════════════════
    0.  PERF UTILITIES — shared by every canvas loop below.
        - debounce(): collapses rapid resize events into one
@@ -109,13 +123,13 @@ function onVisible(el, startLoop, stopLoop) {
       this.age = 0;
     }
 
-    update() {
-      this.age++;
-      this.x += this.vx;
-      this.y += this.vy + Math.sin(this.age * this.wobbleFreq + this.wobblePhase) * this.wobbleAmp * 0.015;
+    update(norm) {
+      this.age += norm;
+      this.x += this.vx * norm;
+      this.y += (this.vy + Math.sin(this.age * this.wobbleFreq + this.wobblePhase) * this.wobbleAmp * 0.015) * norm;
 
       // breathe opacity
-      this.opacity += this.opacitySpeed * this.opacityDir;
+      this.opacity += this.opacitySpeed * this.opacityDir * norm;
       if (this.opacity >= this.baseOpacity * 1.5 || this.opacity <= 0.01) {
         this.opacityDir *= -1;
         this.opacity = clamp(this.opacity, 0.01, this.baseOpacity * 1.5);
@@ -164,8 +178,8 @@ function onVisible(el, startLoop, stopLoop) {
       g.addColorStop(1, this.colour + '0)');
       this._gradient = g;
     }
-    update() {
-      this.x += this.vx; this.y += this.vy;
+    update(norm) {
+      this.x += this.vx * norm; this.y += this.vy * norm;
       if (this.x < -200 || this.x > W + 200 || this.y < -200 || this.y > H + 200) this.reset();
     }
     draw() {
@@ -193,14 +207,16 @@ function onVisible(el, startLoop, stopLoop) {
     }
   }
 
-  let rafId = null;
-  function loop() {
+  let rafId = null, lastT = null;
+  function loop(now) {
+    const norm = normDelta(now, lastT);
+    lastT = now;
     ctx.clearRect(0, 0, W, H);
-    blobs.forEach(b => { b.update(); b.draw(); });
-    particles.forEach(p => { p.update(); p.draw(); });
+    blobs.forEach(b => { b.update(norm); b.draw(); });
+    particles.forEach(p => { p.update(norm); p.draw(); });
     rafId = requestAnimationFrame(loop);
   }
-  function start() { if (rafId === null) loop(); }
+  function start() { if (rafId === null) { lastT = null; rafId = requestAnimationFrame(loop); } }
   function stop() { if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; } }
 
   window.addEventListener('resize', debounce(resize, 150));
@@ -323,16 +339,18 @@ function onVisible(el, startLoop, stopLoop) {
     }
   }
 
-  let rafId = null;
-  function loop() {
+  let rafId = null, lastT = null;
+  function loop(now) {
+    const norm = normDelta(now, lastT);
+    lastT = now;
     ctx.clearRect(0, 0, W, H);
     drawGrid();
     for (const ch of chans) drawChannel(ch);
     drawLabels();
-    t += 0.016;
+    t += 0.016 * norm;
     rafId = requestAnimationFrame(loop);
   }
-  function start() { if (rafId === null) loop(); }
+  function start() { if (rafId === null) { lastT = null; rafId = requestAnimationFrame(loop); } }
   function stop() { if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; } }
 
   window.addEventListener('resize', debounce(resize, 150));
@@ -379,10 +397,10 @@ function onVisible(el, startLoop, stopLoop) {
       // init() instead of re-concatenating it on every single draw call.
       this.fillStyle = this.col + this.op + ')';
     }
-    update() {
-      this.t++;
-      this.x += this.vx + Math.sin(this.t * this.freq + this.phase) * 0.12;
-      this.y += this.vy + Math.cos(this.t * this.freq + this.phase) * 0.08;
+    update(norm) {
+      this.t += norm;
+      this.x += (this.vx + Math.sin(this.t * this.freq + this.phase) * 0.12) * norm;
+      this.y += (this.vy + Math.cos(this.t * this.freq + this.phase) * 0.08) * norm;
       if (this.x < -10 || this.x > W + 10 || this.y < -10 || this.y > H + 10) this.init();
     }
     draw() {
@@ -400,13 +418,15 @@ function onVisible(el, startLoop, stopLoop) {
     if (pts.length === 0) for (let i = 0; i < COUNT; i++) pts.push(new FloatParticle());
   }
 
-  let rafId = null;
-  function loop() {
+  let rafId = null, lastT = null;
+  function loop(now) {
+    const norm = normDelta(now, lastT);
+    lastT = now;
     ctx.clearRect(0, 0, W, H);
-    pts.forEach(p => { p.update(); p.draw(); });
+    pts.forEach(p => { p.update(norm); p.draw(); });
     rafId = requestAnimationFrame(loop);
   }
-  function start() { if (rafId === null) loop(); }
+  function start() { if (rafId === null) { lastT = null; rafId = requestAnimationFrame(loop); } }
   function stop() { if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; } }
 
   const ro = new ResizeObserver(debounce(resize, 100));
@@ -510,9 +530,9 @@ function onVisible(el, startLoop, stopLoop) {
     }
   }
 
-  function physics() {
+  function physics(norm) {
     for (const n of nodes) {
-      n.x += n.vx; n.y += n.vy;
+      n.x += n.vx * norm; n.y += n.vy * norm;
       if (n.x < 0) { n.x = 0; n.vx *= -1; }
       else if (n.x > W) { n.x = W; n.vx *= -1; }
       if (n.y < 0) { n.y = 0; n.vy *= -1; }
@@ -569,15 +589,17 @@ function onVisible(el, startLoop, stopLoop) {
     }
   }
 
-  function draw() {
+  function draw(now) {
+    const norm = normDelta(now, lastT);
+    lastT = now;
     ctx.clearRect(0, 0, W, H);
 
-    physics();
+    physics(norm);
     drawEdges();
 
     // Pulses
     pulses = pulses.filter(p => {
-      p.t += p.speed;
+      p.t += p.speed * norm;
       if (p.t > 1) return false;
       const a = nodes[p.edge.a], b = nodes[p.edge.b];
       const px = lerp(a.x, b.x, p.t);
@@ -606,8 +628,8 @@ function onVisible(el, startLoop, stopLoop) {
     rafId = requestAnimationFrame(draw);
   }
 
-  let rafId = null;
-  function start() { if (rafId === null) draw(); }
+  let rafId = null, lastT = null;
+  function start() { if (rafId === null) { lastT = null; rafId = requestAnimationFrame(draw); } }
   function stop() { if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; } }
 
   const ro = new ResizeObserver(debounce(resize, 100));
@@ -697,9 +719,11 @@ function onVisible(el, startLoop, stopLoop) {
     ctx.stroke();
   }
 
-  function draw() {
+  function draw(now) {
+    const norm = normDelta(now, lastT);
+    lastT = now;
     ctx.clearRect(0, 0, W, H);
-    t += 0.5;
+    t += 0.5 * norm;
 
     drawConstellationLines();
 
@@ -709,8 +733,8 @@ function onVisible(el, startLoop, stopLoop) {
     rafId = requestAnimationFrame(draw);
   }
 
-  let rafId = null;
-  function start() { if (rafId === null) draw(); }
+  let rafId = null, lastT = null;
+  function start() { if (rafId === null) { lastT = null; rafId = requestAnimationFrame(draw); } }
   function stop() { if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; } }
 
   const ro = new ResizeObserver(debounce(resize, 100));
