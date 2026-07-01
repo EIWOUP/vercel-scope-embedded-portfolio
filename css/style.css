@@ -47,6 +47,11 @@ body {
   width: 100%; height: 100%;
   z-index: 0;
   pointer-events: none;
+  /* own compositor layer — redraws happen on GPU without forcing the
+     rest of the page to repaint every frame (matters most on mobile/
+     tablet GPUs where this canvas runs continuously behind everything) */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 /* all sections sit above the global particle field */
@@ -135,6 +140,7 @@ nav, section, footer { position: relative; z-index: 1; }
 .osc-canvas {
   position: absolute; inset: 0; width: 100%; height: 100%;
   opacity: .253; pointer-events: none; /* +15% bloom */
+  transform: translateZ(0); will-change: transform; /* own GPU layer */
 }
 .hero-scanlines {
   position: absolute; inset: 0; pointer-events: none;
@@ -352,6 +358,7 @@ nav, section, footer { position: relative; z-index: 1; }
 #about-particles {
   position: absolute; inset: 0;
   pointer-events: none; z-index: 0;
+  transform: translateZ(0); will-change: transform; /* own GPU layer */
 }
 
 .about-grid {
@@ -458,6 +465,7 @@ nav, section, footer { position: relative; z-index: 1; }
   position: absolute; inset: 0;
   pointer-events: none; z-index: 0;
   opacity: .6;
+  transform: translateZ(0); will-change: transform; /* own GPU layer */
 }
 #projects .container { position: relative; z-index: 1; }
 
@@ -727,6 +735,7 @@ nav, section, footer { position: relative; z-index: 1; }
 #skills-bg-canvas {
   position: absolute; inset: 0;
   pointer-events: none; z-index: 0;
+  transform: translateZ(0); will-change: transform; /* own GPU layer */
 }
 #skills .container { position: relative; z-index: 1; }
 
@@ -1045,6 +1054,25 @@ a.cli-val:hover { color: var(--green); }
   .proj-card.featured { grid-template-columns: 1fr; }
   .projects-grid { grid-template-columns: 1fr; }
   .skills-universe { grid-template-columns: 1fr; }
+}
+/* Mobile phones only (tablets keep the desktop hero layout above) —
+   stacked hero buttons push .hero-actions low enough that the
+   absolutely-positioned .scroll-hint at the bottom of the section
+   was landing right on top of the "Download CV" button. Move the
+   hint into normal flow, right after the actions, instead of
+   pinning it to the section's bottom edge. */
+@media (max-width: 480px) {
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 2rem;
+  }
+  .scroll-hint {
+    position: static;
+    align-self: center; /* was centered via left:50%/translateX, keep it centered */
+    transform: none;
+    margin-top: 2rem;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
