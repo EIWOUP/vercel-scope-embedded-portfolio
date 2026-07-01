@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Services | Gaurav Ahir — Embedded Systems Engineer</title>
+<meta name="description" content="Embedded engineering services — firmware, PCB design, IoT product development, system architecture, and prototype to production." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/services.css" />
+</head>
+<body class="page-services">
+
+<!-- ── GLOBAL PARTICLE FIELD ── -->
+<canvas id="particle-field"></canvas>
+
+<!-- ═══════════════════════════════════════════════════════════ NAV ═══ -->
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-logo" style="text-decoration:none;">
+    <span class="logo-bracket">&lt;</span>
+    <span class="logo-name">GA</span>
+    <span class="logo-bracket">/&gt;</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#hero"     class="nav-link">Home</a></li>
+    <li><a href="index.html#about"    class="nav-link">About</a></li>
+    <li><a href="services.html"       class="nav-link active">Services</a></li>
+    <li><a href="index.html#skills"   class="nav-link">Skills</a></li>
+    <li><a href="index.html#timeline" class="nav-link">Timeline</a></li>
+    <li><a href="index.html#blog"     class="nav-link">Blog</a></li>
+    <li><a href="index.html#contact"  class="nav-link">Contact</a></li>
+    <li class="nav-sep"></li>
+    <li><a href="projects.html" class="nav-link nav-link-sub">All Projects</a></li>
+  </ul>
+  <a href="index.html#contact" class="nav-cta">Hire Me</a>
+  <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ PAGE HERO ═══ -->
+<section class="sp-hero" id="sp-hero">
+  <canvas id="sp-osc" class="sp-osc-canvas"></canvas>
+  <div class="sp-hero-scanlines"></div>
+  <div class="sp-hero-content">
+    <a href="index.html" class="sp-back">
+      <span class="sp-back-arrow">←</span> Back to Home
+    </a>
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      <span class="mono">SERVICES — EMBEDDED ENGINEERING</span>
+    </div>
+    <h1 class="sp-title">What I <span class="accent">Offer</span></h1>
+    <p class="sp-sub">From bare-metal firmware to production-ready PCBs — tailored embedded engineering services for startups, R&amp;D teams, and enterprises building hardware that works in the real world.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ SERVICES SECTION ═══ -->
+<section class="sp-services" id="sp-services">
+
+  <!-- Hexagon particle overlay — driven by services.js -->
+  <canvas id="sp-hex-canvas"></canvas>
+
+  <div class="sp-services-inner">
+
+
+    <!-- Section heading -->
+    <div class="sp-section-head">
+      <div class="section-label"><span class="mono">// Offerings</span> Services</div>
+      <h2 class="section-title">Embedded Engineering <span class="accent">Solutions</span></h2>
+      <p class="section-desc">Each service is backed by hands-on field experience — not just theory. From a first prototype to a deployed production device.</p>
+    </div>
+
+    <!-- ───────────────────── SERVICE CARDS ───────────────────── -->
+    <div class="sp-cards-list">
+
+      <!-- ── SERVICE 1: FIRMWARE DEVELOPMENT ── -->
+      <article class="sp-card" data-idx="0">
+        <div class="sp-card-inner">
+          <div class="sp-card-media">
+            <div class="sp-slider">
+              <div class="sp-slider-track" id="sp-track-0">
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&q=80"
+                       alt="Firmware Development — Circuit Board" loading="lazy" />
+                </div>
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=900&q=80"
+                       alt="Firmware Development — MCU Close-Up" loading="lazy" />
+                </div>
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=900&q=80"
+                       alt="Firmware Development — Debug Session" loading="lazy" />
+                </div>
+              </div>
+              <button class="slide-btn prev" onclick="spSlide('sp-track-0','sp-dots-0',-1)">&#8249;</button>
+              <button class="slide-btn next" onclick="spSlide('sp-track-0','sp-dots-0', 1)">&#8250;</button>
+              <div class="slide-dots" id="sp-dots-0">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+          </div>
+          <div class="sp-card-body">
+            <span class="sp-card-label">SERVICE_01</span>
+            <h3 class="sp-card-title">Firmware Development</h3>
+            <p class="sp-card-desc">Tight, reliable code for any MCU — from bare-metal register access to RTOS-scheduled tasks. Engineered for predictability, low-power operation, and long-term maintainability.</p>
+            <ul class="sp-card-points">
+              <li>Bare-metal C &amp; C++ for STM32, ESP32, PIC18, nRF52</li>
+              <li>FreeRTOS task scheduling, semaphores, queues &amp; event groups</li>
+              <li>Interrupt-driven architectures — ISR, DMA, circular FIFO buffering</li>
+              <li>Low-power sleep/wake cycles, watchdog recovery &amp; OTA update support</li>
+            </ul>
+            <div class="sp-chips">
+              <span class="sp-chip">STM32</span>
+              <span class="sp-chip">ESP32</span>
+              <span class="sp-chip">FreeRTOS</span>
+              <span class="sp-chip">ISR / DMA</span>
+              <span class="sp-chip">Low-Power</span>
+              <span class="sp-chip">State Machines</span>
+              <span class="sp-chip">AT Commands</span>
+              <span class="sp-chip">HAL / LL</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ── SERVICE 2: PCB DESIGN & LAYOUT ── -->
+      <article class="sp-card" data-idx="1">
+        <div class="sp-card-inner">
+          <div class="sp-card-media">
+            <div class="sp-slider">
+              <div class="sp-slider-track" id="sp-track-1">
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1597852074816-d933c7d2b988?w=900&q=80"
+                       alt="PCB Design — Layout View" loading="lazy" />
+                </div>
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1562408590-e32931084e23?w=900&q=80"
+                       alt="PCB Design — Trace Routing" loading="lazy" />
+                </div>
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=900&q=80"
+                       alt="PCB Design — Assembled Board" loading="lazy" />
+                </div>
+              </div>
+              <button class="slide-btn prev" onclick="spSlide('sp-track-1','sp-dots-1',-1)">&#8249;</button>
+              <button class="slide-btn next" onclick="spSlide('sp-track-1','sp-dots-1', 1)">&#8250;</button>
+              <div class="slide-dots" id="sp-dots-1">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+          </div>
+          <div class="sp-card-body">
+            <span class="sp-card-label">SERVICE_02</span>
+            <h3 class="sp-card-title">PCB Design &amp; Layout</h3>
+            <p class="sp-card-desc">Precision multi-layer PCBs from schematic capture to production-ready gerbers. Designed with DFM in mind — signal integrity, thermal management, and a cost-optimised BOM.</p>
+            <ul class="sp-card-points">
+              <li>Schematic capture &amp; BOM generation in Altium Designer or KiCad</li>
+              <li>Up to 4-layer PCB layout with controlled impedance traces</li>
+              <li>RF, high-speed routing &amp; EMI / EMC mitigation techniques</li>
+              <li>Thermal management, ground-plane design &amp; via stitching for power</li>
+            </ul>
+            <div class="sp-chips">
+              <span class="sp-chip">Altium Designer</span>
+              <span class="sp-chip">KiCad</span>
+              <span class="sp-chip">4-Layer</span>
+              <span class="sp-chip">Controlled Impedance</span>
+              <span class="sp-chip">RF Design</span>
+              <span class="sp-chip">DFM</span>
+              <span class="sp-chip">Signal Integrity</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ── SERVICE 3: IOT PRODUCT DEVELOPMENT ── -->
+      <article class="sp-card" data-idx="2">
+        <div class="sp-card-inner">
+          <div class="sp-card-media">
+            <div class="sp-slider">
+              <div class="sp-slider-track" id="sp-track-2">
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80"
+                       alt="IoT Product Development" loading="lazy" />
+                </div>
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=900&q=80"
+                       alt="IoT Connectivity Stack" loading="lazy" />
+                </div>
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=900&q=80"
+                       alt="IoT Network Infrastructure" loading="lazy" />
+                </div>
+              </div>
+              <button class="slide-btn prev" onclick="spSlide('sp-track-2','sp-dots-2',-1)">&#8249;</button>
+              <button class="slide-btn next" onclick="spSlide('sp-track-2','sp-dots-2', 1)">&#8250;</button>
+              <div class="slide-dots" id="sp-dots-2">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+          </div>
+          <div class="sp-card-body">
+            <span class="sp-card-label">SERVICE_03</span>
+            <h3 class="sp-card-title">IoT Product Development</h3>
+            <p class="sp-card-desc">End-to-end connected hardware — from sensor integration and modem firmware to server-side MQTT endpoints. Field-ready, low-power, and production-tested across real deployments.</p>
+            <ul class="sp-card-points">
+              <li>4G LTE, LoRa &amp; BLE 5.0 connectivity stacks built from scratch</li>
+              <li>AT-command modem management — Quectel EC200U, SIM800L</li>
+              <li>MQTT / TCP/IP / HTTP protocol integration &amp; GPS telemetry pipelines</li>
+              <li>Sensor fusion, ADC calibration &amp; multi-protocol bus integration</li>
+            </ul>
+            <div class="sp-chips">
+              <span class="sp-chip">4G LTE</span>
+              <span class="sp-chip">LoRa</span>
+              <span class="sp-chip">BLE 5.0</span>
+              <span class="sp-chip">MQTT</span>
+              <span class="sp-chip">GPS</span>
+              <span class="sp-chip">Quectel</span>
+              <span class="sp-chip">SIM800L</span>
+              <span class="sp-chip">UART/SPI/I2C</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ── SERVICE 4: EMBEDDED SYSTEM ARCHITECTURE ── -->
+      <article class="sp-card" data-idx="3">
+        <div class="sp-card-inner">
+          <div class="sp-card-media">
+            <div class="sp-slider">
+              <div class="sp-slider-track" id="sp-track-3">
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=900&q=80"
+                       alt="Embedded System Architecture" loading="lazy" />
+                </div>
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=900&q=80"
+                       alt="System Architecture Diagram" loading="lazy" />
+                </div>
+              </div>
+              <button class="slide-btn prev" onclick="spSlide('sp-track-3','sp-dots-3',-1)">&#8249;</button>
+              <button class="slide-btn next" onclick="spSlide('sp-track-3','sp-dots-3', 1)">&#8250;</button>
+              <div class="slide-dots" id="sp-dots-3">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+          </div>
+          <div class="sp-card-body">
+            <span class="sp-card-label">SERVICE_04</span>
+            <h3 class="sp-card-title">Embedded System Architecture</h3>
+            <p class="sp-card-desc">Designing the blueprint before a line of code is written. Hardware-software partitioning, MCU selection, and protocol stack planning — getting the foundation right so the build doesn't fail later.</p>
+            <ul class="sp-card-points">
+              <li>Hardware-software co-design &amp; interface mapping for new products</li>
+              <li>MCU / SoC selection, power budget &amp; memory layout planning</li>
+              <li>Protocol stack architecture — LoRa, BLE, 4G, RS-485, Modbus</li>
+              <li>RTOS task model design, boot sequence &amp; startup diagnostics</li>
+            </ul>
+            <div class="sp-chips">
+              <span class="sp-chip">System Design</span>
+              <span class="sp-chip">MCU Selection</span>
+              <span class="sp-chip">Protocol Stack</span>
+              <span class="sp-chip">RTOS Planning</span>
+              <span class="sp-chip">Power Budget</span>
+              <span class="sp-chip">RS-485 / Modbus</span>
+              <span class="sp-chip">Boot Sequence</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ── SERVICE 5: PROTOTYPE TO PRODUCTION ── -->
+      <article class="sp-card" data-idx="4">
+        <div class="sp-card-inner">
+          <div class="sp-card-media">
+            <div class="sp-slider">
+              <div class="sp-slider-track" id="sp-track-4">
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1557438159-51eec7a6c9e8?w=900&q=80"
+                       alt="Prototype to Production — First Build" loading="lazy" />
+                </div>
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1576243345690-4e4b79b63288?w=900&q=80"
+                       alt="Production Assembly" loading="lazy" />
+                </div>
+                <div class="sp-slide">
+                  <img src="https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=900&q=80"
+                       alt="Quality Control &amp; Deployment" loading="lazy" />
+                </div>
+              </div>
+              <button class="slide-btn prev" onclick="spSlide('sp-track-4','sp-dots-4',-1)">&#8249;</button>
+              <button class="slide-btn next" onclick="spSlide('sp-track-4','sp-dots-4', 1)">&#8250;</button>
+              <div class="slide-dots" id="sp-dots-4">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+          </div>
+          <div class="sp-card-body">
+            <span class="sp-card-label">SERVICE_05</span>
+            <h3 class="sp-card-title">Prototype to Production</h3>
+            <p class="sp-card-desc">Taking a concept from a rough breadboard to a field-deployed, production-grade device. Full lifecycle ownership — every step from first component to final handover documentation.</p>
+            <ul class="sp-card-points">
+              <li>Component sourcing, BOM optimisation &amp; cost-down analysis</li>
+              <li>QC procedures, hardware acceptance testing &amp; field validation</li>
+              <li>OTA firmware update strategy &amp; remote diagnostics planning</li>
+              <li>Documentation — test protocols, wiring diagrams &amp; handover packs</li>
+            </ul>
+            <div class="sp-chips">
+              <span class="sp-chip">BOM</span>
+              <span class="sp-chip">Component Sourcing</span>
+              <span class="sp-chip">QC</span>
+              <span class="sp-chip">Field Deployment</span>
+              <span class="sp-chip">OTA Updates</span>
+              <span class="sp-chip">Documentation</span>
+              <span class="sp-chip">DFM</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- .sp-cards-list -->
+  </div><!-- .sp-services-inner -->
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ CONTACT ═══ -->
+<section class="section section-dark" id="contact">
+  <div class="container">
+    <div class="section-label"><span class="mono">// Let's Talk</span> Contact</div>
+    <h2 class="section-title">Let's <span class="accent">Connect</span></h2>
+    <p class="section-desc">Have a project, a prototype to build, or just want to talk embedded? Drop a message — I usually respond within 24 hours.</p>
+
+    <div class="contact-links-grid">
+
+      <a href="mailto:gauravahir.prof@gmail.com" class="contact-card">
+        <div class="cc-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <polyline points="2,4 12,13 22,4"/>
+          </svg>
+        </div>
+        <div class="cc-body">
+          <span class="cc-label">Email</span>
+          <span class="cc-value">gauravahir.prof@gmail.com</span>
+        </div>
+        <span class="cc-arrow">→</span>
+      </a>
+
+      <a href="tel:+919104844881" class="contact-card">
+        <div class="cc-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 12 19.79 19.79 0 0 1 1.12 3.32 2 2 0 0 1 3.1 1h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+        </div>
+        <div class="cc-body">
+          <span class="cc-label">Phone</span>
+          <span class="cc-value">+91 91048 44881</span>
+        </div>
+        <span class="cc-arrow">→</span>
+      </a>
+
+      <a href="https://www.linkedin.com/in/eiwoup/" target="_blank" rel="noopener" class="contact-card">
+        <div class="cc-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+            <rect x="2" y="9" width="4" height="12"/>
+            <circle cx="4" cy="4" r="2"/>
+          </svg>
+        </div>
+        <div class="cc-body">
+          <span class="cc-label">LinkedIn</span>
+          <span class="cc-value">linkedin.com/in/eiwoup</span>
+        </div>
+        <span class="cc-arrow">→</span>
+      </a>
+
+      <a href="https://github.com/gg9302" target="_blank" rel="noopener" class="contact-card">
+        <div class="cc-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+          </svg>
+        </div>
+        <div class="cc-body">
+          <span class="cc-label">GitHub</span>
+          <span class="cc-value">github.com/gg9302</span>
+        </div>
+        <span class="cc-arrow">→</span>
+      </a>
+
+      <div class="contact-card no-link">
+        <div class="cc-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="cc-body">
+          <span class="cc-label">Location</span>
+          <span class="cc-value">Ahmedabad, Gujarat, India</span>
+        </div>
+        <span class="cc-arrow cc-static">IN</span>
+      </div>
+
+    </div>
+
+    <p class="contact-footer-note mono">// response time: &lt; 24h — usually much faster</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ FOOTER ═══ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <a href="index.html" class="nav-logo" style="text-decoration:none; margin-right:0;">
+        <span class="logo-bracket">&lt;</span>
+        <span class="logo-name">GA</span>
+        <span class="logo-bracket">/&gt;</span>
+      </a>
+      <p class="footer-tagline mono">// built with ❤️ and too much solder</p>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Gaurav Ahir — All rights reserved.</span>
+      <span class="mono accent">uptime: <span id="uptime">0s</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/services.js"></script>
+</body>
+</html>
