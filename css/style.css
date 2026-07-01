@@ -90,12 +90,23 @@ nav, section, footer { position: relative; z-index: 1; }
 .nav-link:hover, .nav-link.active { color: var(--green); }
 .nav-link:hover::after, .nav-link.active::after { width: 100%; }
 .nav-link-sub {
-  opacity: .65;
-  font-size: .72rem;
+  background: linear-gradient(90deg, var(--green) 0%, var(--cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: .75;
+  transition: opacity .2s !important;
 }
-.nav-link-sub::before {
-  content: '↳ ';
-  opacity: .7;
+.nav-link-sub::after { display: none; }
+.nav-link-sub::before { content: none; }
+.nav-link-sub:hover { opacity: 1; }
+.nav-sep {
+  list-style: none;
+  width: 1px; height: 14px;
+  background: rgba(255,255,255,.1);
+  align-self: center;
+  margin: 0 .1rem;
+  flex-shrink: 0;
 }
 .nav-cta {
   font-family: var(--mono); font-size: .75rem;
@@ -1166,6 +1177,25 @@ a.contact-card:hover .cc-arrow {
 
 @media (max-width: 600px) {
   .contact-links-grid { grid-template-columns: 1fr; }
+}
+
+/* ── SERVICES TEASER (home page) ──────────────────────────── */
+.services-teaser-grid {
+  display: flex; gap: 1.2rem; flex-wrap: wrap;
+  margin-top: 2.2rem;
+}
+.services-teaser-chip {
+  font-family: var(--mono); font-size: .72rem;
+  padding: .38rem .95rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-dim);
+  background: rgba(8,20,28,.7);
+  transition: border-color .25s, color .25s;
+}
+.services-teaser-chip:hover {
+  border-color: var(--green-dim);
+  color: var(--text);
 }
 
 /* ══════════════════════════════════════════════════════════════

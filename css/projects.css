@@ -4,6 +4,7 @@
    Matches root tokens & motion language from style.css
    ═══════════════════════════════════════════════════════════════ */
 
+/* ── DARKER BODY OVERRIDE ────────────────────────────────────── */
 /* ── PAGE HERO ──────────────────────────────────────────────── */
 .pp-hero {
   position: relative; overflow: hidden;
@@ -91,7 +92,7 @@
 /* ── LIST SECTION ───────────────────────────────────────────── */
 .pp-list-section {
   position: relative; overflow: hidden;
-  background: linear-gradient(180deg, var(--bg2) 0%, var(--bg3) 100%);
+  background: linear-gradient(180deg, #04070a 0%, #050a0e 100%);
 }
 #pp-bg-canvas {
   position: absolute; inset: 0;
