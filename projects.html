@@ -55,17 +55,17 @@
 
     <div class="pp-stats">
       <div class="stat">
-        <span class="stat-num" id="pp-stat-total">8</span>
+        <span class="stat-num" id="pp-stat-total">20+</span>
         <span class="stat-label">Total Builds</span>
       </div>
       <div class="stat-divider"></div>
       <div class="stat">
-        <span class="stat-num">4+</span>
+        <span class="stat-num">4</span>
         <span class="stat-label">MCU Families</span>
       </div>
       <div class="stat-divider"></div>
       <div class="stat">
-        <span class="stat-num" id="pp-stat-shown">8</span>
+        <span class="stat-num" id="pp-stat-shown">4</span>
         <span class="stat-label">Showing</span>
       </div>
     </div>
@@ -290,10 +290,10 @@
         <div class="pp-info">
           <div class="proj-meta">
             <span class="proj-tag pcb">PCB</span>
-            <span class="proj-lang">C++ / LoRaWAN</span>
+            <span class="proj-lang">4 Layers</span>
           </div>
-          <h3 class="pp-card-title">LoRa Mesh Sensor Network</h3>
-          <p class="proj-desc">Long-range sensor mesh using SX1276 LoRa modules across STM32L0 nodes. Custom MAC layer with TDMA scheduling for synchronized multi-node transmission without collisions.</p>
+          <h3 class="pp-card-title">Put To Light Module</h3>
+          <p class="proj-desc">Designed 4-Layer PCB with Impedance matching traces understanding client's functional aspect and asthetic aspect. Project includes ESP32, WiFi, RF, Ink display, TP4056 charging and Smart power Cut-off.</p>
           <div class="pp-specs">
             <span class="spec"><span class="mono accent">MCU:</span> STM32L052</span>
             <span class="spec"><span class="mono accent">Radio:</span> SX1276</span>
@@ -302,9 +302,9 @@
           <div class="proj-keypoints">
             <div class="kp-title">Key Highlights</div>
             <ul class="kp-list">
-              <li>Custom TDMA MAC — no LoRaWAN stack dependency</li>
-              <li>Achieved 5km range with SF12/125kHz</li>
-              <li>Node power: 2.1μA sleep, 12mA active</li>
+              <li>50 Ohms impedance tracing</li>
+              <li>Buck boost using TPS63070</li>
+              <li>Asthetic look of device</li>
             </ul>
           </div>
           <div class="proj-links">
@@ -313,167 +313,7 @@
         </div>
       </article>
 
-      <!-- PROJECT 5 -->
-      <article class="pp-card" data-category="firmware" data-search="audio fft analyzer cmsis-dsp arm cortex-m4 spectrum">
-        <div class="pp-slider" id="pp-slider-5">
-          <div class="pp-slider-track" id="pp-track-5">
-            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=900&q=80" alt="Audio FFT Analyzer LED matrix" loading="lazy" /></div>
-            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=900&q=80" alt="Audio FFT Analyzer board" loading="lazy" /></div>
-          </div>
-          <button class="slide-btn prev" onclick="ppSlide('pp-track-5','pp-dots-5',-1)">&#8249;</button>
-          <button class="slide-btn next" onclick="ppSlide('pp-track-5','pp-dots-5',1)">&#8250;</button>
-          <div class="slide-dots" id="pp-dots-5">
-            <span class="dot active"></span><span class="dot"></span>
-          </div>
-        </div>
-        <div class="pp-info">
-          <div class="proj-meta">
-            <span class="proj-tag firmware">Firmware</span>
-            <span class="proj-lang">C / CMSIS-DSP</span>
-          </div>
-          <h3 class="pp-card-title">Audio FFT Spectrum Analyzer</h3>
-          <p class="proj-desc">Real-time audio spectrum analyzer using ARM CMSIS-DSP on a Cortex-M4F. 128-point FFT running at 44.1 kHz sample rate, output driven to a WS2812 LED matrix for a live visualizer.</p>
-          <div class="pp-specs">
-            <span class="spec"><span class="mono accent">MCU:</span> STM32F446RE</span>
-            <span class="spec"><span class="mono accent">DSP:</span> CMSIS-DSP FFT</span>
-            <span class="spec"><span class="mono accent">Audio I/O:</span> I2S / SAI</span>
-          </div>
-          <div class="proj-keypoints">
-            <div class="kp-title">Key Highlights</div>
-            <ul class="kp-list">
-              <li>128-point real-time FFT at 44.1kHz sample rate</li>
-              <li>DMA-driven I2S capture — zero CPU-blocking audio reads</li>
-              <li>WS2812 matrix driven via SPI bit-banging at 800kHz</li>
-            </ul>
-          </div>
-          <div class="proj-links">
-            <a href="#" class="proj-link">GitHub →</a>
-            <a href="#" class="proj-link ghost">Demo Video →</a>
-          </div>
-        </div>
-      </article>
 
-      <!-- PROJECT 6 -->
-      <article class="pp-card" data-category="iot rtos" data-search="can bus data logger automotive obd-ii stm32g4 sd card">
-        <div class="pp-slider" id="pp-slider-6">
-          <div class="pp-slider-track" id="pp-track-6">
-            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=900&q=80" alt="CAN Bus Data Logger in car" loading="lazy" /></div>
-            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1486684228390-9c4d3fb74e4c?w=900&q=80" alt="CAN Bus Data Logger circuit" loading="lazy" /></div>
-          </div>
-          <button class="slide-btn prev" onclick="ppSlide('pp-track-6','pp-dots-6',-1)">&#8249;</button>
-          <button class="slide-btn next" onclick="ppSlide('pp-track-6','pp-dots-6',1)">&#8250;</button>
-          <div class="slide-dots" id="pp-dots-6">
-            <span class="dot active"></span><span class="dot"></span>
-          </div>
-        </div>
-        <div class="pp-info">
-          <div class="proj-meta">
-            <span class="proj-tag rtos">RTOS</span>
-            <span class="proj-tag iot">IoT</span>
-            <span class="proj-lang">C / STM32G4</span>
-          </div>
-          <h3 class="pp-card-title">CAN Bus Data Logger</h3>
-          <p class="proj-desc">Automotive CAN bus data logger with SD card logging, GPS timestamping, and real-time decoding of OBD-II PIDs. PCB designed in KiCad with isolated CAN transceiver stage.</p>
-          <div class="pp-specs">
-            <span class="spec"><span class="mono accent">MCU:</span> STM32G474</span>
-            <span class="spec"><span class="mono accent">Bus:</span> CAN FD</span>
-            <span class="spec"><span class="mono accent">Storage:</span> SD / FAT32</span>
-          </div>
-          <div class="proj-keypoints">
-            <div class="kp-title">Key Highlights</div>
-            <ul class="kp-list">
-              <li>Real-time OBD-II PID decoding at 500kbps</li>
-              <li>FatFS logging to SD with timestamp-indexed CSV files</li>
-              <li>GPS-synced logging for route + telemetry correlation</li>
-            </ul>
-          </div>
-          <div class="proj-links">
-            <a href="#" class="proj-link">GitHub →</a>
-            <a href="#" class="proj-link ghost">KiCad Files →</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- PROJECT 7 -->
-      <article class="pp-card" data-category="rtos firmware" data-search="industrial temperature controller modbus rtu rs-485 pic32">
-        <div class="pp-slider" id="pp-slider-7">
-          <div class="pp-slider-track" id="pp-track-7">
-            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=900&q=80" alt="Industrial Temperature Controller panel" loading="lazy" /></div>
-            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=900&q=80" alt="Industrial Temperature Controller wiring" loading="lazy" /></div>
-          </div>
-          <button class="slide-btn prev" onclick="ppSlide('pp-track-7','pp-dots-7',-1)">&#8249;</button>
-          <button class="slide-btn next" onclick="ppSlide('pp-track-7','pp-dots-7',1)">&#8250;</button>
-          <div class="slide-dots" id="pp-dots-7">
-            <span class="dot active"></span><span class="dot"></span>
-          </div>
-        </div>
-        <div class="pp-info">
-          <div class="proj-meta">
-            <span class="proj-tag rtos">RTOS</span>
-            <span class="proj-tag firmware">Firmware</span>
-            <span class="proj-lang">C / PIC32MX</span>
-          </div>
-          <h3 class="pp-card-title">Industrial Temp Controller</h3>
-          <p class="proj-desc">Multi-zone temperature controller with a Modbus RTU slave interface, PWM heater control, safety watchdog, and EEPROM-backed config persistence for industrial panel mounting.</p>
-          <div class="pp-specs">
-            <span class="spec"><span class="mono accent">MCU:</span> PIC32MX270</span>
-            <span class="spec"><span class="mono accent">Protocol:</span> Modbus RTU</span>
-            <span class="spec"><span class="mono accent">I/O:</span> RS-485, 4 zones</span>
-          </div>
-          <div class="proj-keypoints">
-            <div class="kp-title">Key Highlights</div>
-            <ul class="kp-list">
-              <li>4-zone independent PID heater control loops</li>
-              <li>Modbus RTU slave with custom register map</li>
-              <li>Hardware watchdog + EEPROM config persistence</li>
-            </ul>
-          </div>
-          <div class="proj-links">
-            <a href="#" class="proj-link">GitHub →</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- PROJECT 8 -->
-      <article class="pp-card" data-category="iot pcb" data-search="ble fitness tracker nrf52840 pcb wearable battery">
-        <div class="pp-slider" id="pp-slider-8">
-          <div class="pp-slider-track" id="pp-track-8">
-            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1557438159-51eec7a6c9e8?w=900&q=80" alt="BLE Wearable Tracker board" loading="lazy" /></div>
-            <div class="pp-slide"><img src="https://images.unsplash.com/photo-1576243345690-4e4b79b63288?w=900&q=80" alt="BLE Wearable Tracker assembled" loading="lazy" /></div>
-          </div>
-          <button class="slide-btn prev" onclick="ppSlide('pp-track-8','pp-dots-8',-1)">&#8249;</button>
-          <button class="slide-btn next" onclick="ppSlide('pp-track-8','pp-dots-8',1)">&#8250;</button>
-          <div class="slide-dots" id="pp-dots-8">
-            <span class="dot active"></span><span class="dot"></span>
-          </div>
-        </div>
-        <div class="pp-info">
-          <div class="proj-meta">
-            <span class="proj-tag iot">IoT</span>
-            <span class="proj-tag pcb">PCB</span>
-            <span class="proj-lang">C / nRF52</span>
-          </div>
-          <h3 class="pp-card-title">BLE Wearable Activity Tracker</h3>
-          <p class="proj-desc">Coin-cell-powered wearable built around the nRF52840, with a custom 2-layer flex-friendly PCB, accelerometer-based step counting, and a companion BLE app for sync and charting.</p>
-          <div class="pp-specs">
-            <span class="spec"><span class="mono accent">MCU:</span> nRF52840</span>
-            <span class="spec"><span class="mono accent">Radio:</span> BLE 5.0</span>
-            <span class="spec"><span class="mono accent">Battery:</span> 45mAh, ~6 days</span>
-          </div>
-          <div class="proj-keypoints">
-            <div class="kp-title">Key Highlights</div>
-            <ul class="kp-list">
-              <li>Custom 2-layer PCB sized to fit a 20mm wearable enclosure</li>
-              <li>LIS2DH accelerometer step-detection algorithm tuned in firmware</li>
-              <li>BLE GATT service for live sync, ~6 day battery life</li>
-            </ul>
-          </div>
-          <div class="proj-links">
-            <a href="#" class="proj-link">GitHub →</a>
-            <a href="#" class="proj-link ghost">Gerbers →</a>
-          </div>
-        </div>
-      </article>
 
     </div><!-- end pp-grid -->
 
